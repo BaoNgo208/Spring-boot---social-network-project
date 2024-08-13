@@ -1,0 +1,16 @@
+.search-result {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-result:hover {
+    background-color: #efefef;
+  }
+  .profileUserImg{
+    margin-right: 10px;
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}

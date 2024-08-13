@@ -1,0 +1,131 @@
+/* Tổng thể của Navbar */
+.container {
+    height: 60px;
+    width: 100%;
+    border-bottom: 1px solid #999;
+    background-color: #f8f8f8; /* Thêm màu nền để phân biệt rõ ràng */
+    z-index: 1;
+  }
+  
+  /* Wrapper chính để canh giữa nội dung */
+  .wrapper {
+    margin: 0 auto;
+    width: 85%;
+    height: 100%;
+    padding: 0.5rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Phần bên trái chứa logo hoặc tên trang */
+  .left > a {
+    font-size: 26px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #555;
+    transition: color 0.3s ease; /* Hiệu ứng chuyển màu khi di chuột */
+  }
+  
+  .left > a:hover {
+    color: #000; /* Màu sắc khi di chuột */
+  }
+  
+  /* Phần giữa để tìm kiếm */
+  .center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 40px;
+    width: 240px;
+    border: 1px solid #888;
+    border-radius: 20px;
+    background-color: #fff; /* Thêm màu nền trắng */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Thêm bóng mờ */
+    display: block;
+    z-index: 120;
+  }
+
+  
+  .center > input {
+    flex: 1; /* Để input chiếm toàn bộ không gian còn lại */
+    padding: 0.5rem;
+    border: none;
+    outline: none;
+    border-right: 1px solid #333;
+    border-radius: 20px 0 0 20px; /* Bo tròn góc trái */
+    font-size: 14px;
+  }
+  
+  .center > input::placeholder {
+    color: #aaa; /* Màu của placeholder */
+  }
+  
+
+  .center:focus-within {
+    border-color: #000; /* Đổi màu viền khi focus */
+  }
+  
+  /* Phần bên phải chứa các icon và ảnh đại diện */
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .notification {
+     width: 70%;
+  }
+
+  
+  .right > .icons {
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #555; /* Màu mặc định */
+    transition: color 0.3s ease; /* Hiệu ứng chuyển màu khi di chuột */
+  }
+  
+  .right > .icons:hover {
+    color: #000; /* Màu sắc khi di chuột */
+  }
+  
+  /* Ảnh đại diện của người dùng */
+  .profileUserImg {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Hiệu ứng khi di chuột */
+  }
+  
+  .profileUserImg:hover {
+    transform: scale(1.1); /* Phóng to ảnh khi di chuột */
+  }
+  
+  /* Nút "Log Out" */
+  .logoutButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #ff4d4d; /* Màu đỏ cho nút "Log Out" */
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .logoutButton:hover {
+    background-color: #d43d3d; /* Màu khi di chuột */
+  }
+  
+  .logoutButtonIcon {
+    font-size: 20px; /* Kích thước biểu tượng */
+  }
+  

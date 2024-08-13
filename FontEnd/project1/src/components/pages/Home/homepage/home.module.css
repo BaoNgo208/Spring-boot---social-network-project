@@ -1,0 +1,21 @@
+.container{
+    width: 98%;
+    margin: 0 auto;
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 3fr 6fr 1.5fr;
+    gap: 50px;
+}
+.right {
+    font-size: 14px;
+}
+.content {
+     display: none;
+}
+.chatSection {
+    position: sticky;
+    bottom: 0;
+    left: 100%;
+    z-index: 1050;
+    width: 50%;
+}

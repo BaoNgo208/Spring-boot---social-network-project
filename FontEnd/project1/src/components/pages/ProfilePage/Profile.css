@@ -1,0 +1,68 @@
+.cover-photo img {
+    width: 80%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  
+    margin:0 auto;
+    
+  }
+  .userInfoContainer{
+    display: flex;
+    width: 100%;
+  }
+  .userInfo{
+    margin-left: 20px;
+    display: flex;
+  }
+  .addFriend {
+    height: 100%;
+    bottom:-100px;
+    margin-top: 10px;
+    position: relative;
+    left :450px;
+    color:red;
+  }
+
+  .addFriend > button {
+    margin-left: 10px;
+  }
+  .profile-picture {
+    position: relative;
+    top: -50px;
+    left :150px
+  }
+  
+  .profile-picture img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 5px solid white;
+    
+    margin-top: 30px;
+  }
+  
+  .user-info {
+    margin-top: 10px;
+    position: relative;
+    left :150px
+  }
+  
+  .user-info h1 {
+    margin: 10px 0;
+  }
+  
+  .post {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+  }
+  
+  .post-list {
+    width: 80%;
+    margin: 0 auto;
+  }
+  
