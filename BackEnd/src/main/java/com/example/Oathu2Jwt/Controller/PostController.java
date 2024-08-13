@@ -35,7 +35,6 @@ public class PostController {
     private final SimpMessagingTemplate messagingTemplate;
 
 
-    //    @PostMapping("/post")
     @PostMapping("/create")
     public ResponseEntity<PostDTO> createPost(Principal principal,
                                               @RequestBody PostDTO postDTO ) {
@@ -45,7 +44,6 @@ public class PostController {
         return new ResponseEntity<PostDTO>(postMapper.mapTo(createdPost), HttpStatus.CREATED);
     }
 
-//    @GetMapping("/get/post/{id}")
     @GetMapping("/get/{id}")
 
     public ResponseEntity<PostDTO> getPost(@PathVariable("id") String id ) {
@@ -53,14 +51,12 @@ public class PostController {
     }
 
 
-//    @PatchMapping("/post/update/{id}")
     @PatchMapping("/update/{id}")
 
     public ResponseEntity<PostDTO> updatePost(@PathVariable("id") String id ,@RequestBody PostDTO postDTO) {
         return ResponseEntity.ok(postMapper.mapTo(postService.updatePost(id,postMapper.mapFrom(postDTO))));
     }
 
-//    @PatchMapping("/post/{id}/comment/{commentId}")
     @PatchMapping("/update/{id}/comment/{commentId}")
 
     public ResponseEntity<PostDTO> updateComment(@PathVariable("id") String id ,
