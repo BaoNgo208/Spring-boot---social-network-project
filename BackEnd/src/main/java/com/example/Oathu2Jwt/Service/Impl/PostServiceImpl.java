@@ -9,6 +9,8 @@ import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,8 @@ public class PostServiceImpl implements PostService {
     private final UserInfoRepo userInfoRepo;
     private final CommentRepo commentRepo;
     private final EmployeeService employeeService;
+
+    private static final Logger logger = LoggerFactory.getLogger(PostService.class);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     @Override
     public UserInfoEntity getPostOwner(Long postId) {
@@ -80,7 +84,6 @@ public class PostServiceImpl implements PostService {
         comment.setUser(user);
         comment.setPost(post);
         commentRepo.save(comment);
-
         return post;
     }
     @Override
@@ -93,7 +96,8 @@ public class PostServiceImpl implements PostService {
             updateHistory.setComment(existingComment);
             existingComment.getUpdateHistories().add(updateHistory);
             return  commentRepo.save(existingComment);
-        });
+        })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"comment not found"));
 
         return postRepo.findById(Long.parseLong(postId)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }

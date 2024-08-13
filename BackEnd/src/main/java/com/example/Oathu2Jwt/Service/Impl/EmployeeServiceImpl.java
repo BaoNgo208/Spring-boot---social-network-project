@@ -196,7 +196,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<UserInfoEntity> getSearchResult(String username) {
-        return userInfoRepo.findByEmployeeUserName(username);
+            List<UserInfoEntity> result = userInfoRepo.findByEmployeeUserName(username);
+            if(result.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Username not found");
+            }
+            return result;
     }
 
 

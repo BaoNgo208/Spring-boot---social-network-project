@@ -4,18 +4,16 @@ package com.example.Oathu2Jwt.Controller;
 import com.example.Oathu2Jwt.Model.DTO.*;
 import com.example.Oathu2Jwt.Model.Entity.*;
 import com.example.Oathu2Jwt.Service.EmployeeService;
-import com.example.Oathu2Jwt.Service.LikeService;
 import com.example.Oathu2Jwt.Service.PostService;
 import com.example.Oathu2Jwt.Service.WorkPointService;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
-
+//ádad
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -23,7 +21,6 @@ import java.util.stream.Collectors;
 public class UserController {
     private final Mapper<EmployeeEntity,EmployeeDTO> mapper;
     private final Mapper<Post,PostDTO> postMapper;
-    private final Mapper<Comment, CommentDTO> commentMapper;
     private final Mapper<WorkPoint,WorkPointDTO> workPointMapper;
     private final Mapper<UserInfoEntity,UserInfoDTO> userInfoMapper;
     private final Mapper<FriendListAndMutualFriend,FriendListAndMutualFriendDTO> friendAndMutualFriendMapper ;
@@ -31,10 +28,8 @@ public class UserController {
 
     private final EmployeeService employeeService;
     private final WorkPointService workPointService;
-    private final LikeService likeService;
     private final PostService postService;
 
-    private final SimpMessagingTemplate messagingTemplate;
     @PatchMapping("/update/{id}")
     public ResponseEntity<EmployeeDTO> updateEmployee( @PathVariable("id") String id , @RequestBody EmployeeDTO employeeDTO) {
         return ResponseEntity.ok(mapper.mapTo(employeeService.updateEmployee(id,mapper.mapFrom(employeeDTO))));
