@@ -77,7 +77,7 @@ public class PostController {
         return ResponseEntity.ok(postDTOs);
     }
 
-
+    //add postId attribute
     @PostMapping("/comment/{id}")
     public ResponseEntity<PostDTO> comment(Principal principal,
                                            @PathVariable("id") String id,
