@@ -1,5 +1,6 @@
 package com.example.Oathu2Jwt.Model.Entity;
 
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

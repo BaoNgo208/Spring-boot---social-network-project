@@ -3,7 +3,7 @@ package com.example.Oathu2Jwt.Util.Mapper.Impl;
 import com.example.Oathu2Jwt.Model.DTO.FriendListAndMutualFriendDTO;
 import com.example.Oathu2Jwt.Model.DTO.UserInfoDTO;
 import com.example.Oathu2Jwt.Model.Entity.FriendListAndMutualFriend;
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

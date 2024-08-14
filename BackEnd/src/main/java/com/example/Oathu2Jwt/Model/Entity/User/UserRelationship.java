@@ -1,5 +1,6 @@
-package com.example.Oathu2Jwt.Model.Entity;
+package com.example.Oathu2Jwt.Model.Entity.User;
 
+import com.example.Oathu2Jwt.Model.Entity.Type;
 import jakarta.persistence.*;
 import lombok.*;
 

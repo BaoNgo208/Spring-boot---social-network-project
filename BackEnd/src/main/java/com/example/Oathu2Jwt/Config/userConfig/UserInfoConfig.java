@@ -1,6 +1,6 @@
 package com.example.Oathu2Jwt.Config.userConfig;
 
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

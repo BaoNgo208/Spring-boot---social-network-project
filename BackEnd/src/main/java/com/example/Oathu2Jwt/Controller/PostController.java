@@ -6,6 +6,7 @@ import com.example.Oathu2Jwt.Model.Entity.*;
 import com.example.Oathu2Jwt.Model.Entity.Notification.CommentNotification;
 import com.example.Oathu2Jwt.Model.Entity.Notification.Notification;
 import com.example.Oathu2Jwt.Model.Entity.Notification.NotificationType;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.LikeService;
 import com.example.Oathu2Jwt.Service.PostService;
@@ -91,6 +92,8 @@ public class PostController {
                 user.getId(),
                 user.getEmployee().getUserName(),
                 postService.getPostOwner(commentedPost.getId()).getId(),
+                NotificationType.COMMENT,
+                commentedPost.getId(),
                 commentMapper.mapTo(comment)
         );
 

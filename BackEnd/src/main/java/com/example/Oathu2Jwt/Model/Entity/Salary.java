@@ -1,4 +1,5 @@
 package com.example.Oathu2Jwt.Model.Entity;
+import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;

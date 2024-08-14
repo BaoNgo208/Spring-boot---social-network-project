@@ -1,6 +1,6 @@
 package com.example.Oathu2Jwt.Util.Graph;
 
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import lombok.Data;
 
 import java.util.ArrayList;

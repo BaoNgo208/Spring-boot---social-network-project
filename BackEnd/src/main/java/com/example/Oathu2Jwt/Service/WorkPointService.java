@@ -1,6 +1,5 @@
 package com.example.Oathu2Jwt.Service;
 
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
 import com.example.Oathu2Jwt.Model.Entity.WorkPoint;
 
 public interface WorkPointService {

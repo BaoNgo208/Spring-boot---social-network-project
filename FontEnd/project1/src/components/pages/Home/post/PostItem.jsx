@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useRef ,useCallback} from 'react';
+import React, { useState, useEffect  ,useCallback} from 'react';
 import classes from './post.module.css';
 import profileUserImg from '../../../../assests/woman.jpg';
 import { HiOutlineDotsVertical } from 'react-icons/hi';
@@ -15,7 +15,6 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
   const [liked, setLiked] = useState(false);
   const { addNotification } = useNotifications(); 
 
-  const postIdRef = useRef(post.id);
 
   // Hàm kiểm tra trạng thái "liked"
   const checkLikedStatus = () => {
@@ -29,32 +28,36 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
     checkLikedStatus();
   }, [post.likes]);
 
-  const handleNotification = (notification) => {
-    const currentUserId = parseInt(sessionStorage.getItem("userId"));
-    if (currentUserId === notification.data.receiverId) {
-      switch (notification.type) {
-        case 'COMMENT':
-          addNotification({
-            senderId: notification.data.senderId,
-            message: `${notification.data.senderName} đã bình luận lên bài viết ${post.id} của bạn`
-          });
-          break;
-        case 'LIKE':
-          addNotification({
-            senderId: notification.data.senderId,
-            message: `${notification.data.senderName} đã thích bài viết ${post.id} của bạn`
-          });
-          break;
-        default:
-          console.warn('Unhandled notification type:', notification.type);
-      }
-    }
-  };
-
-  // Đăng ký callback thông báo, tách khỏi phần logic like
   useEffect(() => {
-    registerNotificationCallback(handleNotification);
-  }, [post.id, addNotification]);
+    
+    
+    const wrappedHandleNotification = (notification) => {
+      const currentUserId = parseInt(sessionStorage.getItem("userId"));
+      if (currentUserId === notification.data.receiverId) {
+        switch (notification.type) {
+          case 'COMMENT':
+            addNotification({
+              senderId: notification.data.senderId,
+              message: `${notification.data.senderName} đã bình luận lên bài viết của bạn`,
+            });
+
+            
+            break;
+          case 'LIKE':
+            addNotification({
+              senderId: notification.data.senderId,
+              message: `${notification.data.senderName} đã thích bài viết của bạn`,
+            });
+            break;
+          default:
+            console.warn('Unhandled notification type:', notification.type);
+        }
+      }
+    };
+  
+    registerNotificationCallback(wrappedHandleNotification);
+  }, [post,post.id, addNotification]);
+  
 
   const handleLikeClick = useCallback(async () => {
     try {

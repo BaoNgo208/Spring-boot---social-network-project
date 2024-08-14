@@ -1,7 +1,7 @@
 package com.example.Oathu2Jwt.Controller;
 
 import com.example.Oathu2Jwt.Model.DTO.UserInfoDTO;
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Service.Impl.AuthService;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import jakarta.servlet.http.HttpServletResponse;

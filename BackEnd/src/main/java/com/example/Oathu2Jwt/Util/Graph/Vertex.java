@@ -1,7 +1,6 @@
 package com.example.Oathu2Jwt.Util.Graph;
 
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
-import lombok.Data;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import lombok.Getter;
 import lombok.Setter;
 

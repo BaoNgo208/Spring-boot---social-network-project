@@ -1,9 +1,8 @@
 package com.example.Oathu2Jwt.Util.Mapper.Impl;
 
 import com.example.Oathu2Jwt.Model.DTO.UserRelationshipDTO;
-import com.example.Oathu2Jwt.Model.Entity.UserRelationship;
+import com.example.Oathu2Jwt.Model.Entity.User.UserRelationship;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

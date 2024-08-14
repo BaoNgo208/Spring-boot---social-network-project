@@ -1,7 +1,7 @@
 package com.example.Oathu2Jwt.Repository;
 
-import com.example.Oathu2Jwt.Model.Entity.UserRelationship;
-import com.example.Oathu2Jwt.Model.Entity.UserRelationshipId;
+import com.example.Oathu2Jwt.Model.Entity.User.UserRelationship;
+import com.example.Oathu2Jwt.Model.Entity.User.UserRelationshipId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

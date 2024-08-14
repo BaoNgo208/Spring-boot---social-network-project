@@ -1,5 +1,6 @@
 package com.example.Oathu2Jwt.Model.Entity;
 
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter

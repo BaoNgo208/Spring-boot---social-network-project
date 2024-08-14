@@ -1,7 +1,8 @@
 package com.example.Oathu2Jwt.Service;
 
 import com.example.Oathu2Jwt.Model.Entity.*;
-import org.springframework.data.domain.Page;
+import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 
 import java.util.List;
 

@@ -1,20 +1,15 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
 import com.example.Oathu2Jwt.Model.Entity.MonthlyWorkPoint;
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
 import com.example.Oathu2Jwt.Repository.MonthlyWorkPointRepo;
 import com.example.Oathu2Jwt.Repository.UserInfoRepo;
 import com.example.Oathu2Jwt.Service.MonthlyWorkPointService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

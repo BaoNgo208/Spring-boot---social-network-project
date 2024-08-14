@@ -1,7 +1,7 @@
 package com.example.Oathu2Jwt.Util.Mapper.Impl;
 
 import com.example.Oathu2Jwt.Model.DTO.EmployeeDTO;
-import com.example.Oathu2Jwt.Model.Entity.EmployeeEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

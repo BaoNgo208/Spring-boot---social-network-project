@@ -1,6 +1,7 @@
-package com.example.Oathu2Jwt.Model.Entity;
+package com.example.Oathu2Jwt.Model.Entity.User;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.example.Oathu2Jwt.Model.Entity.Salary;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;

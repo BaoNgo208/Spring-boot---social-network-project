@@ -1,6 +1,9 @@
-package com.example.Oathu2Jwt.Model.Entity;
+package com.example.Oathu2Jwt.Model.Entity.User;
 
 
+import com.example.Oathu2Jwt.Model.Entity.Post;
+import com.example.Oathu2Jwt.Model.Entity.RefreshTokenEntity;
+import com.example.Oathu2Jwt.Model.Entity.Team;
 import jakarta.persistence.*;
 import lombok.*;
 

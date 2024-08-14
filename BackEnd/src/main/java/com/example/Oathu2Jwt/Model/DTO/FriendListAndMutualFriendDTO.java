@@ -1,6 +1,5 @@
 package com.example.Oathu2Jwt.Model.DTO;
 
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
 import lombok.Data;
 
 import java.util.List;

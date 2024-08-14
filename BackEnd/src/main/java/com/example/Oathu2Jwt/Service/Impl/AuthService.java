@@ -2,16 +2,12 @@ package com.example.Oathu2Jwt.Service.Impl;
 
 import com.example.Oathu2Jwt.Config.JwtConfig.JwtTokenGenerator;
 import com.example.Oathu2Jwt.Model.DTO.AuthResponseDto;
-import com.example.Oathu2Jwt.Model.DTO.UserInfoDTO;
 import com.example.Oathu2Jwt.Model.Entity.*;
-import com.example.Oathu2Jwt.Repository.EmployeeRepo;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Repository.RefreshTokenRepo;
 import com.example.Oathu2Jwt.Repository.UserInfoRepo;
-import com.example.Oathu2Jwt.Service.MonthlyWorkPointService;
-import com.example.Oathu2Jwt.Service.WorkPointService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

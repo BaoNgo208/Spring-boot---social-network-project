@@ -3,6 +3,8 @@ package com.example.Oathu2Jwt.Controller;
 
 import com.example.Oathu2Jwt.Model.DTO.*;
 import com.example.Oathu2Jwt.Model.Entity.*;
+import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.PostService;
 import com.example.Oathu2Jwt.Service.WorkPointService;

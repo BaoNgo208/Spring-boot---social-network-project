@@ -2,7 +2,7 @@ package com.example.Oathu2Jwt.Service;
 
 import com.example.Oathu2Jwt.Model.Entity.Comment;
 import com.example.Oathu2Jwt.Model.Entity.Post;
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

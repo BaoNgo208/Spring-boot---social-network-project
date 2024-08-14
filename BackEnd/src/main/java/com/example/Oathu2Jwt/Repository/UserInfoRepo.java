@@ -1,7 +1,7 @@
 package com.example.Oathu2Jwt.Repository;
 
-import com.example.Oathu2Jwt.Model.Entity.EmployeeEntity;
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

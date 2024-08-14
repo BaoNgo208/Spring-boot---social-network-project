@@ -10,10 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentNotification extends Notification{
+public class CommentNotification extends PostRelatedNotification {
     private CommentDTO comment;
-    public CommentNotification(Long senderId,String senderName, Long receiverId, CommentDTO comment) {
-        super(senderId, senderName, receiverId, NotificationType.COMMENT);
+
+    public CommentNotification(Long senderId, String senderName, Long receiverId, NotificationType type, Long postId, CommentDTO comment) {
+        super(senderId, senderName, receiverId, type, postId);
         this.comment = comment;
     }
 }

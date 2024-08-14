@@ -1,4 +1,4 @@
-package com.example.Oathu2Jwt.Model.Entity;
+package com.example.Oathu2Jwt.Model.Entity.User;
 
 import java.io.Serializable;
 

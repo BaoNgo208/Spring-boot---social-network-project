@@ -1,10 +1,8 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
-import com.example.Oathu2Jwt.Model.Entity.EmployeeEntity;
 import com.example.Oathu2Jwt.Model.Entity.Task;
 import com.example.Oathu2Jwt.Model.Entity.Team;
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
-import com.example.Oathu2Jwt.Repository.EmployeeRepo;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Repository.TaskRepo;
 import com.example.Oathu2Jwt.Repository.TeamRepo;
 import com.example.Oathu2Jwt.Repository.UserInfoRepo;

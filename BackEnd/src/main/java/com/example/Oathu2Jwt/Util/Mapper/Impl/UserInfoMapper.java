@@ -1,9 +1,8 @@
 package com.example.Oathu2Jwt.Util.Mapper.Impl;
 
 import com.example.Oathu2Jwt.Model.DTO.UserInfoDTO;
-import com.example.Oathu2Jwt.Model.Entity.UserInfoEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
-import jakarta.persistence.ManyToOne;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

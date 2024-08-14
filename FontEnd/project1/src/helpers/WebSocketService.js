@@ -49,6 +49,7 @@ const onConnected = () => {
 };
 
 const handleNotification = (notification) => {
+  
   // Xác định loại thông báo và xử lý tương ứng
   switch (notification.type) {
     case 'COMMENT':
