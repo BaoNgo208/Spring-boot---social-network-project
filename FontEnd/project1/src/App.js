@@ -8,7 +8,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthCheck from './helpers/AuthCheck';
 import {Profile} from './components/pages/ProfilePage/Profile';
 import { connectWebSocket ,disconnectWebSocket} from './helpers/WebSocketService';
+import PostDetailPage from './components/pages/Home/post/PostDetail/PostDetailPage';
 import './App.css';
+
+
 const App = () => {
     useEffect(() => {
         const token = sessionStorage.getItem("accessToken");
@@ -32,6 +35,7 @@ const App = () => {
                     <Route element={<ProtectedRoutes />}>
                         <Route path="/home" element={<Home />} />
                         <Route path="/profile" element={<Profile />} /> 
+                        <Route path="/postDetail/:id" element={<PostDetailPage />} /> 
                     </Route>
                 </Routes>
             </Router>

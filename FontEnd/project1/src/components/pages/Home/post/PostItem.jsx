@@ -1,4 +1,4 @@
-import React, { useState, useEffect  ,useCallback} from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import classes from './post.module.css';
 import profileUserImg from '../../../../assests/woman.jpg';
 import { HiOutlineDotsVertical } from 'react-icons/hi';
@@ -10,7 +10,7 @@ import { registerNotificationCallback } from '../../../../helpers/WebSocketServi
 import { useNotifications } from '../navbar/Notification/NotificationContext';
 
 const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onCommentInputChange }) => {
-  
+
   const [likeCount, setLikeCount] = useState(post.likes.length);
   const [liked, setLiked] = useState(false);
   const { addNotification } = useNotifications(); 
@@ -29,24 +29,25 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
   }, [post.likes]);
 
   useEffect(() => {
-    
-    
     const wrappedHandleNotification = (notification) => {
       const currentUserId = parseInt(sessionStorage.getItem("userId"));
+      
+      // const postIdFromNotification = notification.data.postId; 
       if (currentUserId === notification.data.receiverId) {
+        
+
         switch (notification.type) {
           case 'COMMENT':
             addNotification({
-              senderId: notification.data.senderId,
               message: `${notification.data.senderName} đã bình luận lên bài viết của bạn`,
+              postId : notification.data.postId
             });
-
-            
+  
             break;
           case 'LIKE':
             addNotification({
-              senderId: notification.data.senderId,
               message: `${notification.data.senderName} đã thích bài viết của bạn`,
+              postId : notification.data.postId
             });
             break;
           default:
@@ -55,9 +56,14 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
       }
     };
   
+    // Register the callback
     registerNotificationCallback(wrappedHandleNotification);
-  }, [post,post.id, addNotification]);
   
+    // Cleanup on component unmount
+    return () => {
+      registerNotificationCallback(null); // Ensure callback is unregistered
+    };
+  }, [post.id, addNotification]);
 
   const handleLikeClick = useCallback(async () => {
     try {
@@ -110,7 +116,7 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
         </div>
 
         <div className={classes.comments}>
-          {(post.comment || []).map((comment, commentIndex) => (
+          {post.comment.map((comment, commentIndex) => (
             <div key={commentIndex} className={classes.comment}>
               <div className={classes.commentLeft}>
                 <img src={profileUserImg} className={classes.commentImg} alt="Commenter" />

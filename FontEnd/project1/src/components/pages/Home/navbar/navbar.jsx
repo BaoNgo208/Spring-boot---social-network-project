@@ -18,7 +18,6 @@ const Navbar = () => {
         return ; 
     }
 
-
       const response= await api.get("http://localhost:8080/employee/get/friendListAndMutualFriend"); 
       const matchingUsers = response.data.filter(user => 
       user.userInfoDTO.employee.userName.toLowerCase().includes(value.toLowerCase())
@@ -64,7 +63,6 @@ const Navbar = () => {
 
   const handleProfile = ()=> {
     navigate(`/profile`);
-
   }
 
   

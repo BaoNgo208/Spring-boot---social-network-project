@@ -11,7 +11,6 @@ import Chat from "../Chat/Chat";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { registerMessageCallback, setSelectedFriend } from "../../../../helpers/WebSocketService";
 import { NotificationProvider } from "../navbar/Notification/NotificationContext";
-
 export const Home = () => {
   const [unreadMessages, setUnreadMessages] = useState({});
   const [allMessages, setAllMessages] = useState([]);
