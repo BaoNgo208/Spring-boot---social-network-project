@@ -1,24 +1,23 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import PostItem from '../PostItem';
-
+import Post from '../Post';
+import { useParams } from 'react-router-dom';
+import { usePostContext } from './PostContext';
 const PostDetailPage = () => {
-    const location = useLocation();
-    const { post } = location.state;
+  const { id } = useParams();
+  const { posts } = usePostContext();
 
-    return (
-        <div>
-            {post ? (
-                <PostItem 
-                    post={post} 
-                    formatDateTime={(dateTime) => new Date(dateTime).toLocaleString()}
-                    // Pass down other necessary props
-                />
-            ) : (
-                <div>No post found.</div>
-            )}
-        </div>
-    );
+
+
+
+  const newPostList = [{
+    ...posts[0],
+    content: [posts[0].content[0]]
+  }];
+
+
+  if (!posts) return <div>No post found.</div>;
+
+  return <Post posts={[newPostList[0]]} />;
 };
 
 export default PostDetailPage;

@@ -18,6 +18,7 @@ const Post = (props) => {
       // Update posts state with only new posts
       setPosts((prevPosts) => [...prevPosts, ...newPosts]);
 
+
       // Update comment inputs for new posts
       setCommentInputs((prevInputs) => {
         const newInputs = newPosts.reduce((acc, post) => ({

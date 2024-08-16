@@ -1,21 +1,24 @@
+import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import classes from './Notification.module.css';
 import profileUserImg from '../../../../../assests/woman.jpg';
 import { useNotifications } from "./NotificationContext";
 const Notification = () => {
-    const { notifications, hasNewNotification, markNotificationsAsRead } = useNotifications(); // Sử dụng context
+    const { notifications, hasNewNotification, markNotificationsAsRead } = useNotifications(); 
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate(); // Sử dụng useNavigate để chuyển hướng
     
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
         if (!isOpen) {
-            markNotificationsAsRead(); // Đánh dấu là đã đọc khi mở dropdown
+            markNotificationsAsRead(); 
         }
     };
 
-    const handleNotificationClicked = (postId)=>{
-        alert(postId)
-    }
+    const handleNotificationClicked = (postId) => {
+        navigate(`/postDetail/${postId}`); // Chuyển hướng đến PostDetailPage
+        console.log("id:" + postId)
+    };
 
     return (
         <div className={classes.dropdown}>
@@ -26,7 +29,7 @@ const Notification = () => {
             {isOpen && (
                 <div className={classes.dropdownMenu}>
                     {notifications.length > 0 ? notifications.map((notification, index) => (
-                        <div className={classes.container} key={index} onClick={() =>handleNotificationClicked(notification.postId)}>
+                        <div className={classes.container} key={index} onClick={() => handleNotificationClicked(notification.postId)}>
                             <div className={classes.dropdownItem}>
                                 <div>
                                     <img src={profileUserImg} className={classes.profileUserImg} alt="Profile" />
@@ -34,7 +37,6 @@ const Notification = () => {
                                 <div className={classes.userInfo}>
                                     <div className={classes.buttons}>
                                         {notification.message}
-                                      
                                     </div>
                                 </div>
                             </div>

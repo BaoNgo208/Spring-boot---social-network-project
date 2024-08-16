@@ -10,7 +10,8 @@ import {Profile} from './components/pages/ProfilePage/Profile';
 import { connectWebSocket ,disconnectWebSocket} from './helpers/WebSocketService';
 import PostDetailPage from './components/pages/Home/post/PostDetail/PostDetailPage';
 import './App.css';
-
+import { PostProvider } from './components/pages/Home/post/PostDetail/PostContext';
+import { NotificationProvider } from './components/pages/Home/navbar/Notification/NotificationContext';
 
 const App = () => {
     useEffect(() => {
@@ -27,18 +28,27 @@ const App = () => {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <Router>
-                <AuthWrapper />
-                <Routes>
-                    <Route path="/" element={<Login />} />
-                    <Route path="/signup" element={<SignUpPage />} />
-                    <Route element={<ProtectedRoutes />}>
-                        <Route path="/home" element={<Home />} />
-                        <Route path="/profile" element={<Profile />} /> 
-                        <Route path="/postDetail/:id" element={<PostDetailPage />} /> 
-                    </Route>
-                </Routes>
-            </Router>
+            <NotificationProvider>
+
+                <PostProvider>
+
+                    <Router>
+                        <AuthWrapper />
+                        <Routes>
+                            <Route path="/" element={<Login />} />
+                            <Route path="/signup" element={<SignUpPage />} />
+                            <Route element={<ProtectedRoutes />}>
+                                <Route path="/home" element={<Home />} />
+                                <Route path="/profile" element={<Profile />} /> 
+                                <Route path="/postDetail/:id" element={<PostDetailPage />} /> 
+                            </Route>
+                        </Routes>
+                    </Router>
+                </PostProvider>
+
+            </NotificationProvider>
+
+
         </QueryClientProvider>
     );
 };

@@ -11,11 +11,13 @@ import Chat from "../Chat/Chat";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { registerMessageCallback, setSelectedFriend } from "../../../../helpers/WebSocketService";
 import { NotificationProvider } from "../navbar/Notification/NotificationContext";
+import { usePostContext } from "../post/PostDetail/PostContext";
 export const Home = () => {
   const [unreadMessages, setUnreadMessages] = useState({});
   const [allMessages, setAllMessages] = useState([]);
   const [selectedFriend, setSelectedFriendState] = useState(null);
   const [newFeeds, setNewFeeds] = useState([]);
+  const { setPosts } = usePostContext(); // Lấy hàm setPosts từ context
 
   useEffect(() => {
     registerMessageCallback((messageObject) => {
@@ -59,7 +61,9 @@ export const Home = () => {
 
   useEffect(() => {
     if (data) {
+      const posts = data.pages.flat();
       setNewFeeds(data.pages.flat());
+      setPosts(posts);
     }
   }, [data]);
 
