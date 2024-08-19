@@ -19,5 +19,5 @@ public interface PostService {
     public Post updateComment(String postId,String commentId,Comment comment);
 
     public Page<Post> getRecommendPosts(String emailId, int page, int size);
-    public List<Post> getPostOfUser(String emailId);
+    public Page<Post> getPostOfUser(String emailId,int page,int size);
 }

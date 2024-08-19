@@ -6,7 +6,6 @@ import { BiMessageRounded } from 'react-icons/bi';
 import { BsBookmark } from 'react-icons/bs';
 import profileUserImg from '../../../../assests/woman.jpg'
 import api from '../../../../helpers/api';
-import Cookies from 'js-cookie';
 const UserPost = (props) => {
 
   const formatDateTime = (dateTimeString) => {
@@ -26,7 +25,7 @@ const UserPost = (props) => {
       const newComment = { content: commentContent, commentTime: new Date() };
   
 
-      const res = await api.post(`http://localhost:8080/employee/comment/${postId}`, newComment);
+      const res = await api.post(`http://localhost:8080/post/comment/${postId}`, newComment);
       const resComment = res.data.comment;
 
       if (post.id === postId) {

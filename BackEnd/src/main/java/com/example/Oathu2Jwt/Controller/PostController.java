@@ -19,6 +19,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -66,16 +68,7 @@ public class PostController {
         return ResponseEntity.ok(postMapper.mapTo(postService.updateComment(id,commentId,commentMapper.mapFrom(commentDTO))));
     }
 
-    @GetMapping("/get/recommend/post")
 
-    public ResponseEntity<Page<PostDTO>> getRecommendPosts(
-            Principal principal,
-            @RequestParam int page,
-            @RequestParam int size) {
-        Page<Post> posts = postService.getRecommendPosts(principal.getName(), page, size);
-        Page<PostDTO> postDTOs = posts.map(postMapper::mapTo);
-        return ResponseEntity.ok(postDTOs);
-    }
 
     //add postId attribute
     @PostMapping("/comment/{id}")
@@ -135,6 +128,31 @@ public class PostController {
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/get/recommend/post")
+
+    public ResponseEntity<Page<PostDTO>> getRecommendPosts(
+            Principal principal,
+            @RequestParam int page,
+            @RequestParam int size) {
+        Page<Post> posts = postService.getRecommendPosts(principal.getName(), page, size);
+        Page<PostDTO> postDTOs = posts.map(postMapper::mapTo);
+        return ResponseEntity.ok(postDTOs);
+    }
+
+    @GetMapping("/get/profile")
+    public ResponseEntity<Page<PostDTO>> getProfilePost(
+            @RequestParam(required = false) String emailId ,
+            Principal principal,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        if (emailId == null) {
+            emailId = principal.getName();
+        }
+        Page<PostDTO> postDTOS = postService.getPostOfUser(emailId,page,size).map(postMapper::mapTo);
+        return ResponseEntity.ok(postDTOS) ;
     }
 
 

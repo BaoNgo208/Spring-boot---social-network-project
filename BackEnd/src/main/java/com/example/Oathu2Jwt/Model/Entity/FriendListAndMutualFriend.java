@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 
 public class FriendListAndMutualFriend   implements Serializable {
+    private static final long serialVersionUID = 1L; // Thêm dòng này
 
     private Integer mutualFriend ;
     private UserInfoEntity userInfoEntity;

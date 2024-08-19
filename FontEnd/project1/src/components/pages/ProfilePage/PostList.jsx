@@ -5,7 +5,7 @@ import classes from './PostList.module.css';
 
 const PostList = (props) => {
     const friends = props.friendList || []; // Ensure friendList is not undefined
-    console.log(friends)
+
 
     return (
         <div className={classes.container}>

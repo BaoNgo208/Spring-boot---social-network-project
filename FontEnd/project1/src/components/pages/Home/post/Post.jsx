@@ -1,23 +1,23 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Comment from '../../../../entites/Comment';
 import api from '../../../../helpers/api';
 import PostItem from './PostItem';
+import classes from './post.module.css'; // Import the CSS module for styling
 
-const Post = (props) => {
+const Post = ({ posts: propPosts = [], className }) => {
   const [posts, setPosts] = useState([]);
   const [commentInputs, setCommentInputs] = useState({});
 
   useEffect(() => {
-    if (props.posts && props.posts.length > 0) {
+    if (propPosts.length > 0) {
       // Create a set of existing post IDs
       const existingPostIds = new Set(posts.map(post => post.id));
 
       // Filter out posts that already exist in the state
-      const newPosts = props.posts.flatMap(page => page.content).filter(post => !existingPostIds.has(post.id));
+      const newPosts = propPosts.flatMap(page => page.content).filter(post => !existingPostIds.has(post.id));
 
       // Update posts state with only new posts
       setPosts((prevPosts) => [...prevPosts, ...newPosts]);
-
 
       // Update comment inputs for new posts
       setCommentInputs((prevInputs) => {
@@ -28,7 +28,7 @@ const Post = (props) => {
         return { ...prevInputs, ...newInputs };
       });
     }
-  }, [props.posts]);
+  }, [propPosts, posts]);
 
   const handleCommentSubmit = async (postId, commentContent) => {
     try {
@@ -70,17 +70,16 @@ const Post = (props) => {
   };
 
   return (
-    <div>
+    <div className={`${classes.post} ${className}`}>
       {posts.length > 0 ? (
         posts.map((post) => (
-          
           <PostItem
-          key={post.id}
-          post={post}
-          formatDateTime={formatDateTime}
-          handleCommentSubmit={handleCommentSubmit}
-          commentInput={commentInputs[post.id]}
-          onCommentInputChange={(value) => handleInputChange(post.id, value)}
+            key={post.id}
+            post={post}
+            formatDateTime={formatDateTime}
+            handleCommentSubmit={handleCommentSubmit}
+            commentInput={commentInputs[post.id]}
+            onCommentInputChange={(value) => handleInputChange(post.id, value)}
           />
         ))
       ) : (

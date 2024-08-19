@@ -62,16 +62,7 @@ public class UserController {
         return employeeService.acceptFriendRequest(principal.getName(),Long.parseLong(userId))
                 .stream().map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
     }
-    @GetMapping("/get/profile")
-    public List<PostDTO> getProfilePost(@RequestParam(required = false) String emailId ,Principal principal) {
-        if (emailId == null) {
-            emailId = principal.getName();
-        }
-        return postService
-                .getPostOfUser(emailId)
-                .stream().map(postMapper::mapTo)
-                .collect(Collectors.toList());
-    }
+
     @GetMapping("/get/friendList")
     public List<UserInfoDTO> getFriendList(Principal principal) {
         return employeeService.getFriendList(principal.getName() ).stream().map(userInfoMapper::mapTo).collect(Collectors.toList());

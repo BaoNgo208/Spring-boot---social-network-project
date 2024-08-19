@@ -18,6 +18,8 @@ import java.util.List;
 @Table(name="USER_INFO")
 
 public class UserInfoEntity implements Serializable {
+    private static final long serialVersionUID = 1L; // Thêm dòng này
+
     @Id
     @GeneratedValue
     private Long id;

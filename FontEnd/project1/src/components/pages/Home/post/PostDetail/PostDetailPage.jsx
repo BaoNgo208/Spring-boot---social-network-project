@@ -1,11 +1,9 @@
 import React from 'react';
 import Post from '../Post';
-import { useParams } from 'react-router-dom';
 import { usePostContext } from './PostContext';
 const PostDetailPage = () => {
-  const { id } = useParams();
-  const { posts } = usePostContext();
 
+  const { posts } = usePostContext();
 
 
 

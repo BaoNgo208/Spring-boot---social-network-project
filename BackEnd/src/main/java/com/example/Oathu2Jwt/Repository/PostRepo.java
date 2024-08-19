@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PostRepo extends JpaRepository<Post,Long> {
-    public List<Post> findByUserId(Long id);
+    public Page<Post> findByUserId(Long id,Pageable pageable);
     Page<Post> findByUserIdIn(List<Long> userIds, Pageable pageable);
 
 }
