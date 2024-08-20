@@ -10,25 +10,26 @@ const Post = ({ posts: propPosts = [], className }) => {
 
   useEffect(() => {
     if (propPosts.length > 0) {
-      // Create a set of existing post IDs
       const existingPostIds = new Set(posts.map(post => post.id));
-
+  
       // Filter out posts that already exist in the state
       const newPosts = propPosts.flatMap(page => page.content).filter(post => !existingPostIds.has(post.id));
-
-      // Update posts state with only new posts
-      setPosts((prevPosts) => [...prevPosts, ...newPosts]);
-
-      // Update comment inputs for new posts
-      setCommentInputs((prevInputs) => {
-        const newInputs = newPosts.reduce((acc, post) => ({
-          ...acc,
-          [post.id]: ''
-        }), {});
-        return { ...prevInputs, ...newInputs };
-      });
+  
+      // Only update the posts state if there are new posts to add
+      if (newPosts.length > 0) {
+        setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+  
+        // Update comment inputs for new posts
+        setCommentInputs((prevInputs) => {
+          const newInputs = newPosts.reduce((acc, post) => ({
+            ...acc,
+            [post.id]: ''
+          }), {});
+          return { ...prevInputs, ...newInputs };
+        });
+      }
     }
-  }, [propPosts, posts]);
+  }, [propPosts]);  // Notice that 'posts' is removed from the dependency array
 
   const handleCommentSubmit = async (postId, commentContent) => {
     try {

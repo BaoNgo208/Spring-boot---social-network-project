@@ -55,6 +55,7 @@ export const Home = () => {
     },
     getNextPageParam: (lastPage, allPages) => {
       const nextPage = allPages.length;
+      console.log("page size:"+allPages.length)
       return lastPage.length === 0 ? undefined : nextPage;
     },
   });
@@ -125,7 +126,7 @@ export const Home = () => {
     <NotificationProvider> {/* Bọc các component bên trong NotificationProvider */}
 
     <div>
-      <Navbar style={{ zIndex: "1", position: "relative" }} />
+      {/* <Navbar style={{ zIndex: "1", position: "fixed" , top: 0, left: 0}} /> */}
       <div className={classes.container}>
         <div className={classes.left}>
           <SuggestedUsers />
