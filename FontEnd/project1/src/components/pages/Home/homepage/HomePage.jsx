@@ -128,9 +128,11 @@ export const Home = () => {
     <div>
       {/* <Navbar style={{ zIndex: "1", position: "fixed" , top: 0, left: 0}} /> */}
       <div className={classes.container}>
+        
         <div className={classes.left}>
           <SuggestedUsers />
         </div>
+
         <div className="content" style={{ zIndex: "10" }}>
           <PostSection
             className="posting"
@@ -152,11 +154,14 @@ export const Home = () => {
             )}
           </div>
         </div>
-        <Rightside
-          friends={info}
-          onFriendClick={handleFriendClick}
-          unreadMessages={unreadMessages}
-        />
+
+        <div className={classes.rightside}>
+            <Rightside
+              friends={info}
+              onFriendClick={handleFriendClick}
+              unreadMessages={unreadMessages}
+            />
+      </div>
       </div>
     </div>
   </NotificationProvider>

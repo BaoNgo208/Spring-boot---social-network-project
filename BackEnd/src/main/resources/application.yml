@@ -14,6 +14,14 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: socialnetwork  # Tên của cơ sở dữ liệu MongoDB mà bạn muốn kết nối
+
+
 logging:
   level:
     org.springframework.security: trace

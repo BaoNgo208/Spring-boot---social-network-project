@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { SearchResultsList } from './SearchResultsList';
 import FriendRequestsDropdown from './FriendRequestsDropdown/FriendRequestsDropdown';
 import Notification from './Notification/Notification';
-
+import axios from 'axios';
 const Navbar = () => {
   const navigate = useNavigate(); 
   const [input, setInput] = useState("");
@@ -47,7 +47,12 @@ const Navbar = () => {
 
   const handleLogout = async () => {
    
-        await api.post("http://localhost:8080/logout")
+        await axios.post('http://localhost:8080/logout', {}, {
+            headers: {
+                // 'Authorization': 'Bearer ' + Cookies.get('cookie'),
+                'Authorization': 'Bearer ' + sessionStorage.getItem('cookie')
+            }
+        })
         .then(()=> {
             // Cookies.remove("accessToken");
             // Cookies.remove("email");

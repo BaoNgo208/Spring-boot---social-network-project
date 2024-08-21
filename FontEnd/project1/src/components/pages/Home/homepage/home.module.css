@@ -19,3 +19,11 @@
     z-index: 1050;
     width: 50%;
 }
+
+.rightside {
+    position: fixed;
+    top: 10%; /* Đặt khoảng cách từ đầu trang */
+    right: -2%; /* Đặt nó ở phía bên phải */
+    width: 18%; /* Hoặc bạn có thể tùy chỉnh theo kích thước mong muốn */
+    z-index: 1000;
+  }

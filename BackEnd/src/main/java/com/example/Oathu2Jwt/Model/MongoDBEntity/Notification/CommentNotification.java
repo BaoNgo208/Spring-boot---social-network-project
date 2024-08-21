@@ -1,4 +1,4 @@
-package com.example.Oathu2Jwt.Model.Entity.Notification;
+package com.example.Oathu2Jwt.Model.MongoDBEntity.Notification;
 
 import com.example.Oathu2Jwt.Model.DTO.CommentDTO;
 import lombok.AllArgsConstructor;

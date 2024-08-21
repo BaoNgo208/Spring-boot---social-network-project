@@ -3,9 +3,9 @@ package com.example.Oathu2Jwt.Controller;
 
 import com.example.Oathu2Jwt.Model.DTO.*;
 import com.example.Oathu2Jwt.Model.Entity.*;
-import com.example.Oathu2Jwt.Model.Entity.Notification.CommentNotification;
-import com.example.Oathu2Jwt.Model.Entity.Notification.Notification;
-import com.example.Oathu2Jwt.Model.Entity.Notification.NotificationType;
+import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.CommentNotification;
+import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.Notification;
+import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.NotificationType;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.LikeService;
@@ -19,8 +19,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
