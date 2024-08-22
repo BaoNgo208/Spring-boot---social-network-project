@@ -6,6 +6,8 @@ import lombok.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 @Document
 @Getter
 @Setter
@@ -15,11 +17,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ChatMessage {
     @Id
     private String id;
+
     @Indexed
     private Integer senderId;
-    @Indexed
 
+    @Indexed
     private Integer receiverId;
+
+    @Indexed
+    private Date createdAt;
+
+
     private String content;
 
 }

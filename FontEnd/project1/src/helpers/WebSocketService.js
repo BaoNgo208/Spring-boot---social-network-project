@@ -75,6 +75,7 @@ export const sendMessage = (messageContent, receiverId, senderId) => {
       senderId: parseInt(senderId),
       content: messageContent,
       receiverId: parseInt(receiverId),
+      createdAt: new Date().toISOString(), // Thêm thời gian tạo tin nhắn
     };
     stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
   }
