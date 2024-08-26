@@ -89,6 +89,7 @@ public class SecurityConfig {
                         .requestMatchers("/team/**","/employee/**","/post/**").hasAuthority("SCOPE_WRITE")
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/**").permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

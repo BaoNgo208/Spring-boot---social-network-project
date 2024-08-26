@@ -72,10 +72,16 @@ export const Home = () => {
     setNewFeeds((prevFeeds) => [newPost, ...prevFeeds]);
   };
 
-  const handleFriendClick = (friend) => {
+  const handleFriendClick = async (friend) => {
     setSelectedFriendState(friend);
     setSelectedFriend(friend.id); // Cập nhật ID của người bạn được chọn trong WebSocketService
 
+    const senderId=sessionStorage.getItem("userId");
+    const response = await api.get(`http://localhost:8080/get/messages?userId1=${senderId}&userId2=${friend.id}&page=0&size=4`);
+    
+    // Lấy phần content từ response.data
+    const messagesBetwenUsers = response.data.content || [];
+    setAllMessages(messagesBetwenUsers)
     // Reset số lượng tin nhắn chưa đọc cho người bạn được chọn
     setUnreadMessages((prevUnreadMessages) => ({
       ...prevUnreadMessages,

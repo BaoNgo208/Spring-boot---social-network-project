@@ -128,7 +128,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             friendListAndMutualFriends.add(new FriendListAndMutualFriend(userWithUserMutualFriend.getMutualFriend()
                     ,userFriend,userWithUserMutualFriend.getMututalFriendList()));
         }
-        System.out.println("friends size:" + friendListAndMutualFriends.size());
+
         return friendListAndMutualFriends;
     }
 
