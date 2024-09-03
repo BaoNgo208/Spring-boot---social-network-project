@@ -9,6 +9,7 @@ import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.NotificationType;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.LikeService;
+import com.example.Oathu2Jwt.Service.NotificationService;
 import com.example.Oathu2Jwt.Service.PostService;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Date;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class PostController {
     private final EmployeeService employeeService;
     private final LikeService likeService;
     private final PostService postService;
+    private final NotificationService notificationService;
 
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -83,13 +86,14 @@ public class PostController {
                 user.getId(),
                 user.getEmployee().getUserName(),
                 postService.getPostOwner(commentedPost.getId()).getId(),
+                new Date(),
                 NotificationType.COMMENT,
                 commentedPost.getId(),
                 commentMapper.mapTo(comment)
         );
 
+        notificationService.saveNotification(newNotification);
         messagingTemplate.convertAndSend("/notifications/user", newNotification);
-
         return new ResponseEntity<>(postMapper.mapTo(commentedPost), HttpStatus.OK);
     }
 
@@ -100,14 +104,17 @@ public class PostController {
         try {
             Post post = postService.getPostById(postId);
             UserInfoEntity user = employeeService.getUserByEmail(principal.getName());
-            Notification newNotification = new Notification(
-                    user.getId(),
-                    user.getEmployee().getUserName(),
-                    postService.getPostOwner(post.getId()).getId(),
-                    NotificationType.LIKE
-            );
-            likeService.createLike(principal.getName(),postId);
+            Notification newNotification = Notification.builder()
+                    .senderId(user.getId())
+                    .senderName(user.getEmployee().getUserName())
+                    .receiverId(postService.getPostOwner(post.getId()).getId())
+                    .createdAt(new Date())
+                    .type(NotificationType.LIKE)
+                    .postId(Long.parseLong(postId))
+                    .build();
 
+            likeService.createLike(principal.getName(),postId);
+            notificationService.saveNotification(newNotification);
             messagingTemplate.convertAndSend("/notifications/user", newNotification);
             return ResponseEntity.ok().build();
         }

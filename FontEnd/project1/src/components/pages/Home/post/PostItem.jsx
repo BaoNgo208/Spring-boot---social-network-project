@@ -45,10 +45,12 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
   
             break;
           case 'LIKE':
+            console.log('Received LIKE notification:', notification);
             addNotification({
-              message: `${notification.data.senderName} đã thích bài viết của bạn`,
+              message: `${notification.data.senderName} đã thích bài viết ${notification.data.postId} của bạn`,
               postId : notification.data.postId
             });
+            
             break;
           default:
             console.warn('Unhandled notification type:', notification.type);
@@ -63,7 +65,7 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
     return () => {
       registerNotificationCallback(null); // Ensure callback is unregistered
     };
-  }, [post.id, addNotification]);
+  }, []);
 
   const handleLikeClick = useCallback(async () => {
     try {

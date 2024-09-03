@@ -7,13 +7,15 @@ import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.Date;
 
+
 @Document
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Notification {
+public class ArchivedNotification {
+
     @Id
     private String id;
     @Indexed
@@ -24,7 +26,7 @@ public class Notification {
     private Long receiverId;
     @Indexed
     private Date createdAt;
-    private NotificationType type;
-    private Long postId;
 
+    private Date archivedAt;
+    private NotificationType type;
 }

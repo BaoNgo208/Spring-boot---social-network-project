@@ -1,15 +1,17 @@
 import React from 'react';
 import Post from '../Post';
 import { usePostContext } from './PostContext';
+import { useParams } from 'react-router-dom';
 const PostDetailPage = () => {
 
   const { posts } = usePostContext();
-
-
+  console.log(posts)
+  const { id } = useParams(); // Lấy postId từ URL
+  const post = posts[0].content.find(post =>  post.id === parseInt(id, 10));
 
   const newPostList = [{
     ...posts[0],
-    content: [posts[0].content[0]]
+    content: [post]
   }];
 
 

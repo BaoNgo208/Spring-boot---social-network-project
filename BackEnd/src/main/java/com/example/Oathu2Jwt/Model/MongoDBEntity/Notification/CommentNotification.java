@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,8 +15,8 @@ import lombok.Setter;
 public class CommentNotification extends PostRelatedNotification {
     private CommentDTO comment;
 
-    public CommentNotification(Long senderId, String senderName, Long receiverId, NotificationType type, Long postId, CommentDTO comment) {
-        super(senderId, senderName, receiverId, type, postId);
+    public CommentNotification(Long senderId, String senderName, Long receiverId, Date createdAt, NotificationType type, Long postId, CommentDTO comment) {
+        super(senderId, senderName, receiverId,createdAt, type, postId);
         this.comment = comment;
     }
 }

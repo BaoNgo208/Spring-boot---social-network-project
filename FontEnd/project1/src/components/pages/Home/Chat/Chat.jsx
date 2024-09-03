@@ -1,10 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Form, ListGroup, Card } from 'react-bootstrap';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Button, Form } from 'react-bootstrap';
 import { sendMessage } from '../../../../helpers/WebSocketService';
+import classes from "./Chat.module.css";
 
-const Chat = ({ friend, onClose, userId, messages }) => {
+const Chat = ({ userId, friend, onClose, messages, chatContainerRef }) => {
   const [message, setMessage] = useState('');
+  const messageEndRef = useRef(null);
+  const prevScrollTop = useRef(0);
+  const [messagePage, setMessagePage] = useState(0); // Khởi tạo messagePage
+  const prevScrollHeight = useRef(0);
   const receiverId = friend.id;
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      const chatContainer = chatContainerRef.current;
+  
+      if (messagePage > 0) {
+        // Giữ nguyên vị trí cuộn
+        chatContainer.scrollTop = chatContainer.scrollHeight - prevScrollHeight.current;
+      } else {
+        // Cuộn xuống cuối khi mở chat lần đầu
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+  
+      // Cập nhật chiều cao cuộn hiện tại cho lần cuộn tiếp theo
+      prevScrollHeight.current = chatContainer.scrollHeight;
+    }
+  }, [messages]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -23,33 +45,40 @@ const Chat = ({ friend, onClose, userId, messages }) => {
   };
 
   return (
-    <Card style={{ height: '400px' }} className="chat-container bottom-0 end-0 m-3 shadow">
-      <Card.Header className="d-flex justify-content-between align-items-center">
-        <div>{friend.employee.userName}</div>
-        <Button variant="outline-secondary" size="sm" onClick={onClose}>Close</Button>
-      </Card.Header>
-      <Card.Body className="chat-body overflow-auto">
-        <ListGroup variant="flush">
-          {messages.map((msg, index) => (
-            <ListGroup.Item key={index}>
-              <strong>{getSenderName(msg)}:</strong> {msg.content}
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-      </Card.Body>
-      <Card.Footer className="d-flex">
+    <div className={classes.chatWindow}>
+      <div className={classes.header}>
+        <span>{friend.employee.userName}</span>
+        <button onClick={onClose} className={classes.closeButton}>
+          Close
+        </button>
+      </div>
+      <div ref={chatContainerRef} className={classes.messageContainer}>
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`${classes.message} ${
+              msg.senderId === parseInt(userId) ? classes.sent : classes.received
+            }`}
+          >
+            <strong>{getSenderName(msg)}:</strong> {msg.content}
+          </div>
+        ))}
+        <div ref={messageEndRef} />
+      </div>
+      <div className={classes.footer}>
         <Form.Control
           type="text"
           placeholder="Type a message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+          className={classes.input}
         />
-        <Button variant="primary" onClick={handleSendMessage} className="ms-2">
+        <Button variant="primary" onClick={handleSendMessage} className={classes.sendButton}>
           Send
         </Button>
-      </Card.Footer>
-    </Card>
+      </div>
+    </div>
   );
 };
 

@@ -5,6 +5,7 @@ import com.example.Oathu2Jwt.Model.Entity.Post;
 import com.example.Oathu2Jwt.Model.Entity.UpdateHistory;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Repository.*;
+import com.example.Oathu2Jwt.Repository.MongoDBRepo.NotificationRepo;
 import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class PostServiceImpl implements PostService {
     private final UserInfoRepo userInfoRepo;
     private final CommentRepo commentRepo;
     private final EmployeeService employeeService;
+    private final NotificationRepo notificationRepo;
 
     private static final Logger logger = LoggerFactory.getLogger(PostService.class);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -84,6 +86,7 @@ public class PostServiceImpl implements PostService {
         comment.setUser(user);
         comment.setPost(post);
         commentRepo.save(comment);
+
         return post;
     }
     @Override

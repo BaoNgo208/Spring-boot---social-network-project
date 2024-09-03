@@ -7,4 +7,5 @@ public interface ChatMessageArchivingService {
 
     public void archiveOldChatMessage();
     public Page<ChatMessage> getMessagesBetweenUsers(String userId1, String userId2, int page, int size);
+    public void saveMessageToMongodbAndRedis(ChatMessage chatMessage);
 }

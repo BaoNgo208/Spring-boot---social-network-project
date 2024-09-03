@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,18 +21,10 @@ import java.time.Duration;
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageRepo chatMessageRepo;
-    private final RedisTemplate<String,Object> redisTemplate;
     private final ChatMessageArchivingService chatMessageArchivingService;
-
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage) {
-
-        chatMessageRepo.save(chatMessage);
-        String redisKey = chatMessage.getSenderId().toString() + ":" + chatMessage.getReceiverId().toString();
-
-        redisTemplate.opsForHash().put(redisKey, chatMessage.getId(),chatMessage);
-        redisTemplate.expire(chatMessage.getSenderId().toString(), Duration.ofDays(7));
-
+        chatMessageArchivingService.saveMessageToMongodbAndRedis(chatMessage);
         messagingTemplate.convertAndSend("/topic/chat", chatMessage);
     }
 

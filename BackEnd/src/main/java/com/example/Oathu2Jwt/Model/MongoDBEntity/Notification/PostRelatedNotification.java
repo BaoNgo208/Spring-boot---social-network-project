@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public abstract class PostRelatedNotification extends Notification {
-    private Long postId;
 
-    public PostRelatedNotification(Long senderId, String senderName, Long receiverId, NotificationType type, Long postId) {
-        super(senderId, senderName, receiverId, type);
-        this.postId = postId;
+    public PostRelatedNotification(Long senderId, String senderName, Long receiverId, Date createdAt, NotificationType type, Long postId) {
+        super(null,senderId, senderName, receiverId, createdAt,type,postId);
     }
 }
