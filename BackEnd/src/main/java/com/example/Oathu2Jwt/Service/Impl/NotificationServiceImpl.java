@@ -93,7 +93,7 @@ public class NotificationServiceImpl implements NotificationService {
             notifications = new ArrayList<>(notificationSet);
         }
 
-        //if not found in notification , find in archiveNotification mongodb
+        //if not found in notification mongodb, find in archiveNotification mongodb
         if(notifications.isEmpty()) {
             Page<ArchivedNotification> pageOfNotification = archivedNotificationRepo.findByReceiverId(Long.parseLong(userId),pageable);
             notifications = pageOfNotification.getContent()

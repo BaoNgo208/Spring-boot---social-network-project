@@ -10,7 +10,6 @@ import PostSection from "../posting/posting";
 import Chat from "../Chat/Chat";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { registerMessageCallback, setSelectedFriend } from "../../../../helpers/WebSocketService";
-import { NotificationProvider } from "../navbar/Notification/NotificationContext";
 import { usePostContext } from "../post/PostDetail/PostContext";
 import { useRef } from "react";
 
@@ -54,7 +53,7 @@ export const Home = () => {
     queryKey: "posts",
     queryFn: async ({ pageParam = 0 }) => {
       const response = await api.get(
-        `http://localhost:8080/post/get/recommend/post?page=${pageParam}&size=4`
+        `http://localhost:8080/post/get/recommend/post?page=${pageParam}&size=10`
       );
       return response.data;
     },

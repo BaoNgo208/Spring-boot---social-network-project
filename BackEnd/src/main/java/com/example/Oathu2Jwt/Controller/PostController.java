@@ -143,6 +143,7 @@ public class PostController {
             @RequestParam int size) {
         Page<Post> posts = postService.getRecommendPosts(principal.getName(), page, size);
         Page<PostDTO> postDTOs = posts.map(postMapper::mapTo);
+        postService.saveUserPostToRedisCache(principal.getName());
         return ResponseEntity.ok(postDTOs);
     }
 

@@ -1,6 +1,7 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
 import com.example.Oathu2Jwt.Config.JwtConfig.JwtTokenGenerator;
+import com.example.Oathu2Jwt.Exception.User.UserNotFoundException;
 import com.example.Oathu2Jwt.Model.DTO.AuthResponseDto;
 import com.example.Oathu2Jwt.Model.Entity.*;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
@@ -53,12 +54,9 @@ public class AuthService {
         try
         {
             var userInfoEntity = userInfoRepo.findByEmailId(authentication.getName())
-                    .orElseThrow(()->{
-                        log.error("[AuthService:userSignInAuth] User :{} not found",authentication.getName());
-                        return new ResponseStatusException(HttpStatus.NOT_FOUND,"USER NOT FOUND ");
-                    });
-
-
+                    .orElseThrow(() -> new UserNotFoundException(
+                            "User not found hehe"
+                    ));
             String accessToken = jwtTokenGenerator.generateAccessToken(authentication);
             String refreshToken = jwtTokenGenerator.generateRefreshToken(authentication);
             saveUserRefreshToken(userInfoEntity,refreshToken);

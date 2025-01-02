@@ -39,9 +39,9 @@ const Login = () => {
         };
         const onMessageReceived = (message) => {
             console.log("Received message:", message);
-            // Handle received message here
           };
 
+        
         fetch("http://localhost:8080/auth/sign-in", requestOptions)
             .then((response) => {
                 if (response.ok) {

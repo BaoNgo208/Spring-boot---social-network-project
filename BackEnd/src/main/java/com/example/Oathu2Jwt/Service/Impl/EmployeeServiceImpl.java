@@ -1,5 +1,6 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
+import com.example.Oathu2Jwt.Exception.User.UserNotFoundException;
 import com.example.Oathu2Jwt.Model.Entity.*;
 import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
@@ -45,7 +46,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 Optional.ofNullable(employee.getUserName()).ifPresent(existingEmployee::setUserName);
                 existingEmployee.setSalary(salary);
                 return employeeRepo.save(existingEmployee);
-            }).orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"user not found"));
+            }).orElseThrow(() -> new UserNotFoundException("User not found"));
 
     }
 
@@ -131,8 +132,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return friendListAndMutualFriends;
     }
-
-
 
     @Override
     @Caching(evict = {
@@ -246,7 +245,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         sortedEntries.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
 
         List<FriendListAndMutualFriend> maxCommonFriendsUsers = new ArrayList<>();
-        int maxCommonFriendsCount = sortedEntries.isEmpty() ? 0 : sortedEntries.get(0).getValue();
         int currentCount = 0;
 
         for (Map.Entry<UserInfoEntity, Integer> entry : sortedEntries) {
@@ -260,11 +258,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 break;
             }
         }
-        for (FriendListAndMutualFriend user : maxCommonFriendsUsers) {
-            System.out.println("user with most mutual friends: " + user.getUserInfoEntity().getEmailId());
-        }
-        System.out.println("count:" + maxCommonFriendsCount);
-        System.out.println("list size:"+maxCommonFriendsUsers.size());
+
         return maxCommonFriendsUsers;
     }
 

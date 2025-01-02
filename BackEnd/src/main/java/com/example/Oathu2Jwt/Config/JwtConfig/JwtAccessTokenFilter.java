@@ -42,7 +42,6 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
             log.info("[JwtAccessTokenFilter:doFilterInternal]Filtering the Http Request:{}",request.getRequestURI());
             if (request.getRequestURI().contains("/ws") ) {
                 filterChain.doFilter(request, response);
-                System.out.println("truee");
                 return;
             }
             else {
@@ -50,12 +49,6 @@ public class JwtAccessTokenFilter extends OncePerRequestFilter {
 
                 JwtDecoder jwtDecoder =  NimbusJwtDecoder.withPublicKey(rsaKeyRecord.rsaPublicKey()).build();
 
-//            if(!authHeader.startsWith(TokenType.Bearer.name())){
-//                filterChain.doFilter(request,response);
-//
-//                return;
-//            }
-//
 
 
                 final String token = authHeader.substring(7);

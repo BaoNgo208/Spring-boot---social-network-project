@@ -24,7 +24,7 @@ public class Post {
     private String content;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
-    private Date PostTime;
+    private Date postTime;
     private String category;
 
     @ManyToOne

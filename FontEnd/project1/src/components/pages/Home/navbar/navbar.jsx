@@ -32,8 +32,6 @@ const Navbar = () => {
       const matchingRecommendedFriends = response2.data.filter(user => 
         user.userInfoDTO.employee.userName.toLowerCase().includes(value.toLowerCase())
       ).map(user => ({ ...user, isFriend: false  }));
-    
-  
       const combinedResults = [...matchingUsers, ...matchingRecommendedFriends];
   
       setResult(combinedResults);

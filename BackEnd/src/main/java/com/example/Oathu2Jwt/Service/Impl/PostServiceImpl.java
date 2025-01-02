@@ -5,15 +5,14 @@ import com.example.Oathu2Jwt.Model.Entity.Post;
 import com.example.Oathu2Jwt.Model.Entity.UpdateHistory;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Repository.*;
-import com.example.Oathu2Jwt.Repository.MongoDBRepo.NotificationRepo;
 import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,9 +32,8 @@ public class PostServiceImpl implements PostService {
     private final UserInfoRepo userInfoRepo;
     private final CommentRepo commentRepo;
     private final EmployeeService employeeService;
-    private final NotificationRepo notificationRepo;
+    private final RedisTemplate<String,Object> redisTemplate;
 
-    private static final Logger logger = LoggerFactory.getLogger(PostService.class);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     @Override
     public UserInfoEntity getPostOwner(Long postId) {
@@ -48,8 +47,6 @@ public class PostServiceImpl implements PostService {
         return postRepo.findById(Long.parseLong(id))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"post not found"));
     }
-
-
 
     @Override
     @Transactional
@@ -116,7 +113,7 @@ public class PostServiceImpl implements PostService {
                 .map(UserInfoEntity::getId)
                 .collect(Collectors.toList());
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"postTime"));
         return postRepo.findByUserIdIn(userIds, pageable);
     }
 
@@ -126,6 +123,27 @@ public class PostServiceImpl implements PostService {
         return postRepo.findByUserId(userInfoRepo.findByEmailId(emailId)
                 .orElseThrow(() -> new RuntimeException("Error:Not Found this user"))
                 .getId(),pageable);
+    }
+
+    @Override
+    public void saveUserPostToRedisCache(String emailId) {
+        String redisKey =  "user:"+emailId+":postIds";
+
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
+            return;
+        }
+
+        List<Long> postIds = new ArrayList<>();
+        int page = 0;
+        int size=10;
+        Page<Post> postPage;
+        do {
+            postPage = getPostOfUser(emailId, page, size);
+            postIds.addAll(postPage.stream().map(Post::getId).toList());
+            page++;
+        } while (postPage.hasNext());
+
+        redisTemplate.opsForList().rightPushAll(redisKey,postIds.toArray());
     }
 
 }

@@ -34,24 +34,25 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
       
       // const postIdFromNotification = notification.data.postId; 
       if (currentUserId === notification.data.receiverId) {
-        
+        const newNotification = {
+          senderId: notification.data.senderId,
+          senderName: notification.data.senderName,
+          receiverId: notification.data.receiverId,
+          createdAt: new Date(), // Add current date as createdAt
+          type: notification.type,
+          postId: notification.data.postId,
+      };
 
         switch (notification.type) {
           case 'COMMENT':
-            addNotification({
-              message: `${notification.data.senderName} đã bình luận lên bài viết của bạn`,
-              postId : notification.data.postId
-            });
-  
+            addNotification(newNotification);
             break;
+
           case 'LIKE':
-            console.log('Received LIKE notification:', notification);
-            addNotification({
-              message: `${notification.data.senderName} đã thích bài viết ${notification.data.postId} của bạn`,
-              postId : notification.data.postId
-            });
-            
+            addNotification(newNotification);
             break;
+
+            
           default:
             console.warn('Unhandled notification type:', notification.type);
         }

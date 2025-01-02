@@ -6,7 +6,7 @@ const PostDetailPage = () => {
 
   const { posts } = usePostContext();
   console.log(posts)
-  const { id } = useParams(); // Lấy postId từ URL
+  const { id } = useParams(); 
   const post = posts[0].content.find(post =>  post.id === parseInt(id, 10));
 
   const newPostList = [{

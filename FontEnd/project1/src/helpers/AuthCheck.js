@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { validateToken } from './auth';
-import Cookies from 'js-cookie';
 const AuthCheck = ({ location }) => {
     const navigate = useNavigate();
     const hasNavigated = useRef(false); 
