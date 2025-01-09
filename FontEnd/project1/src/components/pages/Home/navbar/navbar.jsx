@@ -1,107 +1,144 @@
-import React from 'react';
-import classes from './navbar.module.css';
-import {  Link, useNavigate } from 'react-router-dom'; 
-import {  AiOutlineSearch, AiOutlineLogout } from 'react-icons/ai';
-import api from '../../../../helpers/api';
-import { useState } from 'react';
-import { SearchResultsList } from './SearchResultsList';
-import FriendRequestsDropdown from './FriendRequestsDropdown/FriendRequestsDropdown';
-import Notification from './Notification/Notification';
-import axios from 'axios';
+import React, { useState } from "react";
+import classes from "./navbar.module.css";
+import { Link, useNavigate } from "react-router-dom";
+import { AiOutlineSearch, AiOutlineLogout } from "react-icons/ai";
+import api from "../../../../helpers/api";
+import axios from "axios";
+import { SearchResultsList } from "./SearchResultsList";
+import FriendRequestsDropdown from "./FriendRequestsDropdown/FriendRequestsDropdown";
+import Notification from "./Notification/Notification";
+
 const Navbar = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [input, setInput] = useState("");
-  const [results,setResult] =useState([]);
-  const fetchResult=async (value) => {
-      if (!value || value.trim() === "") {
-        setResult([])
-        return ; 
+  const [results, setResults] = useState([]);
+
+  const fetchResults = async (value) => {
+    if (!value || value.trim() === "") {
+      setResults([]);
+      return;
     }
 
-      const response= await api.get("http://localhost:8080/employee/get/friendListAndMutualFriend"); 
-      const matchingUsers = response.data.filter(user => 
-      user.userInfoDTO.employee.userName.toLowerCase().includes(value.toLowerCase())
-  ).map(user => ({ ...user, isFriend: true }));
-      setResult(matchingUsers)
-      
-      const response2= await api.get("http://localhost:8080/employee/get/getRecommendedFriend");
-      response2.data.forEach(item => {
-        const commonFriendCount = item.mutualFriend;
-        console.log("Common friend count:", commonFriendCount);
-    });
-      const matchingRecommendedFriends = response2.data.filter(user => 
-        user.userInfoDTO.employee.userName.toLowerCase().includes(value.toLowerCase())
-      ).map(user => ({ ...user, isFriend: false  }));
+    try {
+      const response = await api.get(
+        "http://localhost:8080/employee/get/friendListAndMutualFriend"
+      );
+      const matchingUsers = response.data
+        .filter((user) =>
+          user.userInfoDTO.employee.userName
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        )
+        .map((user) => ({ ...user, isFriend: true }));
+
+      const response2 = await api.get(
+        "http://localhost:8080/employee/get/getRecommendedFriend"
+      );
+      const matchingRecommendedFriends = response2.data
+        .filter((user) =>
+          user.userInfoDTO.employee.userName
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        )
+        .map((user) => ({ ...user, isFriend: false }));
+
       const combinedResults = [...matchingUsers, ...matchingRecommendedFriends];
-  
-      setResult(combinedResults);
-  }
-  
-  const handelChange =(value)=> {
-     setInput(value)
-     fetchResult(value)
-  }
-
-
-  const handleLogout = async () => {
-   
-        await axios.post('http://localhost:8080/logout', {}, {
-            headers: {
-                // 'Authorization': 'Bearer ' + Cookies.get('cookie'),
-                'Authorization': 'Bearer ' + sessionStorage.getItem('cookie')
-            }
-        })
-        .then(()=> {
-            // Cookies.remove("accessToken");
-            // Cookies.remove("email");
-            // Cookies.remove("cookie");
-
-            sessionStorage.removeItem("accessToken");
-            sessionStorage.removeItem("email");
-            sessionStorage.removeItem("cookie");
-            navigate('/');
-        })
-          
+      setResults(combinedResults);
+    } catch (error) {
+      console.error("Error fetching results:", error);
+    }
   };
 
-  const handleProfile = ()=> {
-    navigate(`/profile`);
-  }
+  const handleChange = (value) => {
+    setInput(value);
+    fetchResults(value);
+  };
 
-  
+  const handleSearch = (event) => {
+    if (event.key === "Enter" && input.trim()) {
+      const mockResults = [
+        {
+          userInfoDTO: {
+            emailId: "user1@example.com",
+            employee: { userName: "User 1" },
+            accName: "user1",
+          },
+          isFriend: false,
+          isFollowed: true,
+          mutualFriend: 2,
+        },
+        {
+          userInfoDTO: {
+            emailId: "user2@example.com",
+            employee: { userName: "User 2" },
+            accName: "user2",
+          },
+          isFriend: true,
+          mutualFriend: 5,
+        },
+      ];
+      if (input.trim()) {
+        navigate("/search-results", {
+          state: { results: mockResults, query: input },
+        });
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        "http://localhost:8080/logout",
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("cookie"),
+          },
+        }
+      );
+
+      sessionStorage.clear();
+      navigate("/");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  const handleProfile = () => {
+    navigate(`/profile`);
+  };
+
   return (
-    
-    <div className={classes.container} >
+    <div className={classes.container}>
       <div className={classes.wrapper}>
         <div className={classes.left}>
-          <Link to='/'>SociaPulse</Link>
+          <Link to="/">SociaPulse</Link>
         </div>
         <div className={classes.center}>
-            <input type="text" placeholder='Search user...' value={input} 
-            onChange={(e)=> handelChange(e.target.value)}
-            />
-            <AiOutlineSearch className={classes.searchIcon} onClick={()=> alert("click")} />
-          {/* <SearchBar/> */}
-          <SearchResultsList style={{  zIndex: 10 }} results={results} />
+          <input
+            type="text"
+            placeholder="Search user..."
+            value={input}
+            onChange={(e) => handleChange(e.target.value)}
+            onKeyDown={handleSearch}
+          />
+          <AiOutlineSearch
+            className={classes.searchIcon}
+            onClick={() => alert("Search icon clicked")}
+          />
+          <SearchResultsList style={{ zIndex: 10 }} results={results} />
         </div>
         <div className={classes.right}>
-      
-          <FriendRequestsDropdown  className={classes.friendrequests} /> 
-
-          <Notification className={classes.notification}  /> 
-
-
+          <FriendRequestsDropdown className={classes.friendrequests} />
+          <Notification className={classes.notification} />
           <button className={classes.logoutButton} onClick={handleProfile}>
             <AiOutlineLogout className={classes.logoutButtonIcon} />
             Profile
           </button>
-
           <button className={classes.logoutButton} onClick={handleLogout}>
             <AiOutlineLogout className={classes.logoutButtonIcon} />
             Log Out
           </button>
-
-          
         </div>
       </div>
     </div>

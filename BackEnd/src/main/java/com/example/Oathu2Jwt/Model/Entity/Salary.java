@@ -1,5 +1,5 @@
 package com.example.Oathu2Jwt.Model.Entity;
-import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserEntity;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -28,7 +28,7 @@ public class Salary implements Serializable {
     private Date toDate;
 
     @OneToMany(mappedBy = "salary", cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
-    private Set<EmployeeEntity> employeeEntitySet = new HashSet<>();
+    private Set<UserEntity> employeeEntitySet = new HashSet<>();
 
 
 }

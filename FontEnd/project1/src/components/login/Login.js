@@ -54,12 +54,12 @@ const Login = () => {
                 // Cookies.set("accessToken", result.access_token, {expires : 14});
                 // Cookies.set("email", state.username,{expires : 14});
                 // Cookies.set("cookie", result.refresh_token,{expires : 14});
-
                 sessionStorage.setItem("accessToken", result.access_token);
                 sessionStorage.setItem("email", state.username);
                 sessionStorage.setItem("cookie", result.refresh_token);
                 sessionStorage.setItem("username", result.user_name);
                 sessionStorage.setItem("userId", result.user_Id);
+                sessionStorage.setItem("accName", result.acc_name);
                 navigate('/home');
                 connectWebSocket( onMessageReceived);
 

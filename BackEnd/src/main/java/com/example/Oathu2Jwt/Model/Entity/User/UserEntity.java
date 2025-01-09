@@ -2,6 +2,7 @@ package com.example.Oathu2Jwt.Model.Entity.User;
 
 import com.example.Oathu2Jwt.Model.Entity.Salary;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeEntity implements Serializable {
+public class UserEntity implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
@@ -31,6 +32,7 @@ public class EmployeeEntity implements Serializable {
     private Salary salary;
 
     @OneToOne
+    @JsonManagedReference // Serialize trường này
     private UserInfoEntity userInfo;
 
 

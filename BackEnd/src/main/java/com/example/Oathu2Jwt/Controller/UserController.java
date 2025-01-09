@@ -3,13 +3,14 @@ package com.example.Oathu2Jwt.Controller;
 
 import com.example.Oathu2Jwt.Model.DTO.*;
 import com.example.Oathu2Jwt.Model.Entity.*;
-import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserEntity;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
-import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.PostService;
+import com.example.Oathu2Jwt.Service.UserService;
 import com.example.Oathu2Jwt.Service.WorkPointService;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
@@ -21,20 +22,18 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @RequestMapping("/employee")
 public class UserController {
-    private final Mapper<EmployeeEntity,EmployeeDTO> mapper;
-    private final Mapper<Post,PostDTO> postMapper;
+    private final Mapper<UserEntity, UserDTO> mapper;
     private final Mapper<WorkPoint,WorkPointDTO> workPointMapper;
     private final Mapper<UserInfoEntity,UserInfoDTO> userInfoMapper;
     private final Mapper<FriendListAndMutualFriend,FriendListAndMutualFriendDTO> friendAndMutualFriendMapper ;
 
 
-    private final EmployeeService employeeService;
+    private final UserService userService;
     private final WorkPointService workPointService;
-    private final PostService postService;
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<EmployeeDTO> updateEmployee( @PathVariable("id") String id , @RequestBody EmployeeDTO employeeDTO) {
-        return ResponseEntity.ok(mapper.mapTo(employeeService.updateEmployee(id,mapper.mapFrom(employeeDTO))));
+    public ResponseEntity<UserDTO> updateEmployee(@PathVariable("id") String id , @RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(mapper.mapTo(userService.updateEmployee(id,mapper.mapFrom(userDTO))));
     }
     @PostMapping("/checkIn")
     public ResponseEntity<WorkPointDTO> checkIn(Principal principal) {
@@ -45,46 +44,52 @@ public class UserController {
 
     @PostMapping("/addFriend/{username}")
     public ResponseEntity<?> addFriend(@PathVariable("username") String username ,Principal principal) {
-         return ResponseEntity.ok(employeeService.addFriend(principal.getName(),username));
+         return ResponseEntity.ok(userService.addFriend(principal.getName(),username));
     }
     @DeleteMapping("/delete/friend-request/{userId}")
     public ResponseEntity<?> deleteFriendRequest(@PathVariable("userId") String userId ,Principal principal) {
-        return ResponseEntity.ok(employeeService.deleteFriendRequest(principal.getName(),userId));
+        return ResponseEntity.ok(userService.deleteFriendRequest(principal.getName(),userId));
     }
     @GetMapping("/get/friend-requests")
     public List<UserInfoDTO> getFriendRequests(Principal principal) {
-            List<UserInfoEntity>userInfoEntities =employeeService.getAddFriendRequestList(principal.getName());
+            List<UserInfoEntity>userInfoEntities =userService.getAddFriendRequestList(principal.getName());
             return userInfoEntities.stream().map(userInfoMapper::mapTo).collect(Collectors.toList());
     }
 
     @PostMapping("/accept-friend/request/{userId}")
     public List<FriendListAndMutualFriendDTO> acceptFriendRequest(@PathVariable("userId") String userId,Principal principal) {
-        return employeeService.acceptFriendRequest(principal.getName(),Long.parseLong(userId))
+        return userService.acceptFriendRequest(principal.getName(),Long.parseLong(userId))
                 .stream().map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
     }
 
     @GetMapping("/get/friendList")
     public List<UserInfoDTO> getFriendList(Principal principal) {
-        return employeeService.getFriendList(principal.getName() ).stream().map(userInfoMapper::mapTo).collect(Collectors.toList());
+        return userService.getFriendList(principal.getName() ).stream().map(userInfoMapper::mapTo).collect(Collectors.toList());
     }
     @GetMapping("/get/friendListAndMutualFriend")
     public List<FriendListAndMutualFriendDTO> getFriendListAndMutualFriend(@RequestParam(required = false) String emailId ,Principal principal) {
         if(emailId != null) {
-            return employeeService.getFriendListAndMutualFriend(emailId).stream()
+            return userService.getFriendListAndMutualFriend(emailId).stream()
                     .map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
         }
-        return employeeService.getFriendListAndMutualFriend(principal.getName()).stream()
+        return userService.getFriendListAndMutualFriend(principal.getName()).stream()
                 .map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
     }
 
-    @GetMapping("/get/searchResult/{userName}")
-    public List<UserInfoDTO> getSearchResult(@PathVariable("userName") String userName) {
-        List<UserInfoEntity> searchResults = employeeService.getSearchResult(userName);
-        return searchResults.stream().map(userInfoMapper::mapTo).collect(Collectors.toList());
+    @GetMapping("/get/searchResult")
+    public ResponseEntity<Page<SearchedUserInfoDto>> getSearchResult(
+            Principal principal,
+            @RequestParam String userName,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        Page<SearchedUserInfoDto> searchResults = userService.getSearchResult(principal.getName(), userName, page, size);
+        return ResponseEntity.ok(searchResults);
     }
+
     @GetMapping("/get/getRecommendedFriend")
     public List<FriendListAndMutualFriendDTO> createSocialGraph(Principal principal) {
-        List<FriendListAndMutualFriend> users = employeeService.createSocialGraph(principal.getName());
+        List<FriendListAndMutualFriend> users = userService.createSocialGraph(principal.getName());
         return users.stream().map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
     }
 

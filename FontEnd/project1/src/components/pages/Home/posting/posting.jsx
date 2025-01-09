@@ -1,32 +1,41 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
-import { AiOutlinePicture } from 'react-icons/ai';
-import profileUserImg from '../../../../assests/woman.jpg'
-import api from '../../../../helpers/api';
-import PostEntity from '../../../../entites/PostEntity';
-import Cookies from 'js-cookie';
+import React, { useState } from "react";
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { AiOutlinePicture } from "react-icons/ai";
+import profileUserImg from "../../../../assests/woman.jpg";
+import api from "../../../../helpers/api";
+import PostEntity from "../../../../entites/PostEntity";
+import Cookies from "js-cookie";
 const PostSection = (props) => {
-  const [content , setContent] = useState('');
+  const [content, setContent] = useState("");
   const handlePost = async (content) => {
-    const newPost = new PostEntity(content, 'social');
-    props.onPost(newPost);
-
-
-    const data = await api.post(`http://localhost:8080/post/create`, newPost);
-    console.log(data)
-    setContent('');
+    const newPost = new PostEntity(content, "social");
+    try {
+      const response = await api.post(
+        `http://localhost:8080/post/create`,
+        newPost
+      );
+      const createdPost = response.data; // Đảm bảo dữ liệu trả về đầy đủ từ API
+      props.onPost([createdPost]); // Truyền đối tượng đầy đủ lên component cha
+      setContent("");
+      console.log("new posting:", createdPost);
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
   };
 
-
   return (
-    <Container style={{ width: '90%' , margin: '0' }} 
-    >
-      <Row >
-        <Col  className="mx-auto p-0 ">
-          <div className="card my-4 " >
+    <Container style={{ width: "90%", margin: "0" }}>
+      <Row>
+        <Col className="mx-auto p-0 ">
+          <div className="card my-4 ">
             <div className="card-body">
               <div className="d-flex align-items-center">
-              <img src={profileUserImg} className="profile-user-img me-2" alt="User Profile" style={{ width: '40px', height: '40px' }} />
+                <img
+                  src={profileUserImg}
+                  className="profile-user-img me-2"
+                  alt="User Profile"
+                  style={{ width: "40px", height: "40px" }}
+                />
                 <Form.Control
                   type="text"
                   placeholder="What's on your mind?"
@@ -43,9 +52,14 @@ const PostSection = (props) => {
                 </Button>
               </div>
               <div>
-                <Button variant="primary" onClick={() => {
-                  handlePost(content);
-                }}>Post</Button>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    handlePost(content);
+                  }}
+                >
+                  Post
+                </Button>
               </div>
             </div>
           </div>

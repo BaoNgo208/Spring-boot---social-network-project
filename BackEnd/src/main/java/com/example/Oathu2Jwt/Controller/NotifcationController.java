@@ -3,8 +3,8 @@ package com.example.Oathu2Jwt.Controller;
 
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.Notification;
-import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.NotificationService;
+import com.example.Oathu2Jwt.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +18,13 @@ import java.security.Principal;
 @RequestMapping("/notification")
 public class NotifcationController {
     private final NotificationService notificationService;
-    private final EmployeeService employeeService;
+    private final UserService userService;
     @GetMapping("/get/notification")
     public ResponseEntity<Page<Notification>> getNotification(
             Principal principal,
             @RequestParam int page,
             @RequestParam int size) {
-        UserInfoEntity user = employeeService.getUserByEmail(principal.getName());
+        UserInfoEntity user = userService.getUserByEmail(principal.getName());
         Page<Notification> notifications = notificationService.getNotificationOfUser(user.getId().toString(),page,size);
         return  ResponseEntity.ok(notifications);
     }

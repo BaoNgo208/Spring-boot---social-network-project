@@ -24,6 +24,6 @@ public class UserInfoDTO {
     @NotEmpty(message = "acc name must not be empty")
     private String accName;
 
-    private EmployeeDTO employee;
+    private UserDTO employee;
 
 }

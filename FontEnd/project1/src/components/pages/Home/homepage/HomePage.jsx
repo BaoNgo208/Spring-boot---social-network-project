@@ -1,5 +1,4 @@
-import React, { useState, useEffect ,useCallback} from "react";
-import Navbar from "../navbar/navbar";
+import React, { useState, useEffect, useCallback } from "react";
 import Rightside from "../rightside/Rightside";
 import SuggestedUsers from "../suggestedUsers/SuggestedUsers";
 import Post from "../post/Post";
@@ -9,7 +8,10 @@ import api from "../../../../helpers/api";
 import PostSection from "../posting/posting";
 import Chat from "../Chat/Chat";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { registerMessageCallback, setSelectedFriend } from "../../../../helpers/WebSocketService";
+import {
+  registerMessageCallback,
+  setSelectedFriend,
+} from "../../../../helpers/WebSocketService";
 import { usePostContext } from "../post/PostDetail/PostContext";
 import { useRef } from "react";
 
@@ -26,7 +28,10 @@ export const Home = () => {
   useEffect(() => {
     registerMessageCallback((messageObject) => {
       setUnreadMessages(messageObject.unreadMessages);
-      setAllMessages((prevMessages) => [...prevMessages, messageObject.message]);
+      setAllMessages((prevMessages) => [
+        ...prevMessages,
+        messageObject.message,
+      ]);
     });
   }, []);
 
@@ -37,7 +42,9 @@ export const Home = () => {
   } = useQuery({
     queryKey: "info",
     queryFn: async () => {
-      const response = await api.get("http://localhost:8080/employee/get/friendList");
+      const response = await api.get(
+        "http://localhost:8080/employee/get/friendList"
+      );
       return response.data;
     },
   });
@@ -72,7 +79,13 @@ export const Home = () => {
   }, [data, setPosts]);
 
   const handlePost = (newPost) => {
-    setNewFeeds((prevFeeds) => [newPost, ...prevFeeds]);
+    setNewFeeds((prevFeeds) => {
+      console.log("Updating feeds:", [
+        ...prevFeeds,
+        ...(Array.isArray(newPost) ? newPost : [newPost]),
+      ]);
+      return [...prevFeeds, ...(Array.isArray(newPost) ? newPost : [newPost])];
+    });
   };
 
   const loadMessages = async (friend, page) => {
@@ -81,7 +94,7 @@ export const Home = () => {
       `http://localhost:8080/get/messages?userId1=${senderId}&userId2=${friend.id}&page=${page}&size=8&sort=timestamp,desc`
     );
     const messages = response.data.content;
-  
+
     if (messages && messages.length > 0) {
       return messages;
     } else {
@@ -131,15 +144,15 @@ export const Home = () => {
 
   const loadMoreMessages = async () => {
     if (!selectedFriend || !hasMore) return;
-  
+
     const olderMessages = await loadMessages(selectedFriend, messagePage);
-  
+
     if (olderMessages.length > 0) {
       // Lọc các tin nhắn đã tồn tại trong allMessages
       const newMessages = olderMessages.filter(
-        (msg) => !allMessages.some(existingMsg => existingMsg.id === msg.id)
+        (msg) => !allMessages.some((existingMsg) => existingMsg.id === msg.id)
       );
-  
+
       if (newMessages.length > 0) {
         setAllMessages((prevMessages) => [...newMessages, ...prevMessages]);
         setMessagePage((prevPage) => prevPage + 1);
@@ -156,7 +169,7 @@ export const Home = () => {
       loadMoreMessages();
     }
   }, [hasMore, loadMoreMessages]);
-  
+
   useEffect(() => {
     if (selectedFriend) {
       const chatContainer = chatContainerRef.current;
@@ -189,42 +202,42 @@ export const Home = () => {
   );
 
   return (
-      <div>
-        <div className={classes.container}>
-          <div className={classes.left}>
-            <SuggestedUsers />
-          </div>
+    <div>
+      <div className={classes.container}>
+        <div className={classes.left}>
+          <SuggestedUsers />
+        </div>
 
-          <div className="content" style={{ zIndex: "10" }}>
-            <PostSection
-              className="posting"
-              newfeeds={newFeeds}
-              onPost={handlePost}
-              style={{ position: "relative", zIndex: "1" }}
-            />
-            <Post posts={newFeeds} />
-            <div className={classes.chatSection}>
-              {selectedFriend && (
-                <Chat
-                  userId={sessionStorage.getItem("userId")}
-                  friend={selectedFriend}
-                  onClose={handleCloseChat}
-                  messages={selectedFriendMessages} // Use sorted messages here
-                  className={classes.chat}
-                  chatContainerRef={chatContainerRef}
-                />
-              )}
-            </div>
-          </div>
-
-          <div className={classes.rightside}>
-            <Rightside
-              friends={info}
-              onFriendClick={handleFriendClick}
-              unreadMessages={unreadMessages}
-            />
+        <div className="content" style={{ zIndex: "10" }}>
+          <PostSection
+            className="posting"
+            newfeeds={newFeeds}
+            onPost={handlePost}
+            style={{ position: "relative", zIndex: "1" }}
+          />
+          <Post posts={newFeeds} />
+          <div className={classes.chatSection}>
+            {selectedFriend && (
+              <Chat
+                userId={sessionStorage.getItem("userId")}
+                friend={selectedFriend}
+                onClose={handleCloseChat}
+                messages={selectedFriendMessages}
+                className={classes.chat}
+                chatContainerRef={chatContainerRef}
+              />
+            )}
           </div>
         </div>
+
+        <div className={classes.rightside}>
+          <Rightside
+            friends={info}
+            onFriendClick={handleFriendClick}
+            unreadMessages={unreadMessages}
+          />
+        </div>
       </div>
+    </div>
   );
 };

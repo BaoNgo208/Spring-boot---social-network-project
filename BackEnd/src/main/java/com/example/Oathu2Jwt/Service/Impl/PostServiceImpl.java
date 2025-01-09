@@ -1,12 +1,13 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
+import com.example.Oathu2Jwt.Exception.User.UserNotFoundException;
 import com.example.Oathu2Jwt.Model.Entity.Comment;
 import com.example.Oathu2Jwt.Model.Entity.Post;
 import com.example.Oathu2Jwt.Model.Entity.UpdateHistory;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Repository.*;
-import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.PostService;
+import com.example.Oathu2Jwt.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +32,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepo postRepo ;
     private final UserInfoRepo userInfoRepo;
     private final CommentRepo commentRepo;
-    private final EmployeeService employeeService;
+    private final UserService userService;
     private final RedisTemplate<String,Object> redisTemplate;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -104,7 +105,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getRecommendPosts(String emailId, int page, int size) {
-        List<UserInfoEntity> userAndFriends = employeeService.getFriendList(emailId);
+        List<UserInfoEntity> userAndFriends = userService.getFriendList(emailId);
         userAndFriends.add(
                 userInfoRepo.findByEmailId(emailId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"))
         );
@@ -112,6 +113,7 @@ public class PostServiceImpl implements PostService {
         List<Long> userIds = userAndFriends.stream()
                 .map(UserInfoEntity::getId)
                 .collect(Collectors.toList());
+
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"postTime"));
         return postRepo.findByUserIdIn(userIds, pageable);
@@ -123,6 +125,21 @@ public class PostServiceImpl implements PostService {
         return postRepo.findByUserId(userInfoRepo.findByEmailId(emailId)
                 .orElseThrow(() -> new RuntimeException("Error:Not Found this user"))
                 .getId(),pageable);
+    }
+
+    @Override
+    public Page<Post> getPostsByUserName(String username, int page, int size) {
+        List<UserInfoEntity> users = userInfoRepo.findByEmployeeUserName(username);
+        List<Long> userIds = users.stream()
+                .map(UserInfoEntity::getId)
+                .collect(Collectors.toList());
+
+
+        if (userIds.isEmpty()) {
+            throw new UserNotFoundException("Users not found for username: " + username);
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"postTime"));
+        return postRepo.findByUserIdIn(userIds,pageable);
     }
 
     @Override

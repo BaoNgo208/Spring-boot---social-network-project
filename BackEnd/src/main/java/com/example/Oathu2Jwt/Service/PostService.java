@@ -20,8 +20,7 @@ public interface PostService {
 
     public Page<Post> getRecommendPosts(String emailId, int page, int size);
     public Page<Post> getPostOfUser(String emailId,int page,int size);
-
+    public Page<Post> getPostsByUserName(String username,int page,int size);
     public void saveUserPostToRedisCache(String emailId);
-
 
 }

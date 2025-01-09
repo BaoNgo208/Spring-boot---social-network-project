@@ -13,7 +13,7 @@ import './App.css';
 import { PostProvider } from './components/pages/Home/post/PostDetail/PostContext';
 import { NotificationProvider } from './components/pages/Home/navbar/Notification/NotificationContext';
 import Layout from './components/pages/Home/navbar/Layout';
-
+import { SearchedUserPage } from './components/pages/SearchedUserPage/SearchedUserPage';
 const App = () => {
     useEffect(() => {
         const token = sessionStorage.getItem("accessToken");
@@ -41,6 +41,7 @@ const App = () => {
                                 <Route path="/home" element={<Layout><Home /></Layout>} />
                                 <Route path="/profile" element={<Layout><ProfileWrapper /></Layout>} /> {/* Sử dụng ProfileWrapper */}
                                 <Route path="/postDetail/:id" element={<PostDetailPage />} />
+                                <Route path='/search-results' element = {<SearchedUserPage/>} />
                             </Route>
                         </Routes>
                     </Router>

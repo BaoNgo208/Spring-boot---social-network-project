@@ -1,0 +1,83 @@
+.main-container {
+    display:  flex;
+    width: 100%;
+}
+.main-content {
+   width: 75%;
+   background-color: #f0f2f5;
+   display: flex;
+   justify-content: center;
+   flex-wrap: wrap;
+   gap: 10px;
+}
+.searched-user-posts {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.main-content > * {
+   width: 75%;
+}
+.searched-user-posts > * {
+    width: 100%;
+}
+
+.user-item {
+    height: 30%;
+    width:100%;
+}
+
+
+.light-theme {
+   font-family: Arial, sans-serif;
+   color: #050505;
+   width: 75%;
+}
+.right-nav-bar {
+    width: 25%;
+}
+/* Tiêu đề */
+.search-header {
+   font-size: 24px;
+   font-weight: bold;
+   margin-bottom: 20px;
+}
+
+/* Danh sách người dùng */
+.searched-user-list {
+   display: flex;
+   flex-direction: column;
+   gap: 0px;
+   width: 90%;
+   background-color: white;
+}
+
+
+.user-item {
+   background-color: white;
+}
+
+.user-item img {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   border: 1px solid #ddd;
+}
+
+.action-button {
+   margin-left: auto;
+   padding: 10px 15px;
+   border: none;
+   border-radius: 8px;
+   cursor: pointer;
+   background-color: #2374E1;
+   color: white;
+   font-weight: bold;
+   transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+   background-color: #1a5bb8;
+}

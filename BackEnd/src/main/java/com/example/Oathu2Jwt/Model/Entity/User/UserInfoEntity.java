@@ -4,6 +4,8 @@ package com.example.Oathu2Jwt.Model.Entity.User;
 import com.example.Oathu2Jwt.Model.Entity.Post;
 import com.example.Oathu2Jwt.Model.Entity.RefreshTokenEntity;
 import com.example.Oathu2Jwt.Model.Entity.Team;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name="USER_INFO")
-
 public class UserInfoEntity implements Serializable {
     private static final long serialVersionUID = 1L; // Thêm dòng này
 
@@ -37,13 +38,19 @@ public class UserInfoEntity implements Serializable {
 
     @OneToOne(mappedBy = "userInfo",cascade  =  CascadeType.ALL)
     @JoinColumn
-    private EmployeeEntity employee;
+    @JsonBackReference // Bỏ qua trường này khi serialize UserEntity
+    private UserEntity employee;
 
     @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
+    @JsonIgnore // Bỏ qua khi serialize
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore // Bỏ qua khi serialize
+
     private List<RefreshTokenEntity> refreshTokens;
+    @JsonIgnore // Bỏ qua khi serialize
+
     @ManyToOne
     private Team team;
 }

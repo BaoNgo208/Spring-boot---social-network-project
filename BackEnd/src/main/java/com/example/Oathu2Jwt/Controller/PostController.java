@@ -7,10 +7,10 @@ import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.CommentNotificatio
 import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.Notification;
 import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.NotificationType;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
-import com.example.Oathu2Jwt.Service.EmployeeService;
 import com.example.Oathu2Jwt.Service.LikeService;
 import com.example.Oathu2Jwt.Service.NotificationService;
 import com.example.Oathu2Jwt.Service.PostService;
+import com.example.Oathu2Jwt.Service.UserService;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +31,7 @@ public class PostController {
     private final Mapper<Comment, CommentDTO> commentMapper;
 
 
-    private final EmployeeService employeeService;
+    private final UserService userService;
     private final LikeService likeService;
     private final PostService postService;
     private final NotificationService notificationService;
@@ -80,7 +80,7 @@ public class PostController {
 
         Post commentedPost = postService.comment(principal.getName(), id, comment);
 
-        UserInfoEntity user = employeeService.getUserByEmail(principal.getName());
+        UserInfoEntity user = userService.getUserByEmail(principal.getName());
 
         CommentNotification newNotification = new CommentNotification(
                 user.getId(),
@@ -103,7 +103,7 @@ public class PostController {
     {
         try {
             Post post = postService.getPostById(postId);
-            UserInfoEntity user = employeeService.getUserByEmail(principal.getName());
+            UserInfoEntity user = userService.getUserByEmail(principal.getName());
             Notification newNotification = Notification.builder()
                     .senderId(user.getId())
                     .senderName(user.getEmployee().getUserName())
@@ -162,6 +162,14 @@ public class PostController {
     }
 
 
-
+    @GetMapping("/get/posts")
+    public ResponseEntity<Page<PostDTO>> getPostOfUsersByUserName(
+            @RequestParam String username,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        Page<PostDTO> postDTOS = postService.getPostsByUserName(username,page,size).map(postMapper::mapTo);
+        return ResponseEntity.ok(postDTOS);
+    }
 
 }

@@ -76,7 +76,6 @@ public class NotificationServiceImpl implements NotificationService {
                 ));
         List<Notification> notifications = new ArrayList<>(notificationSet);
 
-        //if not found in redis,find in notification in mongodb
         if(notifications.isEmpty()) {
             Page<Notification> pageOfNotification = notificationRepo
                     .findByReceiverId(Long.parseLong(userId),pageable);

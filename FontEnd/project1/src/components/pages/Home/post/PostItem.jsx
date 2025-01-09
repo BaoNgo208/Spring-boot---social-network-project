@@ -1,25 +1,33 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import classes from './post.module.css';
-import profileUserImg from '../../../../assests/woman.jpg';
-import { HiOutlineDotsVertical } from 'react-icons/hi';
-import { AiOutlineHeart } from 'react-icons/ai';
-import { BiMessageRounded } from 'react-icons/bi';
-import { BsBookmark } from 'react-icons/bs';
-import api from '../../../../helpers/api';
-import { registerNotificationCallback } from '../../../../helpers/WebSocketService';
-import { useNotifications } from '../navbar/Notification/NotificationContext';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import classes from "./post.module.css";
+import profileUserImg from "../../../../assests/woman.jpg";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { AiOutlineHeart } from "react-icons/ai";
+import { BiMessageRounded } from "react-icons/bi";
+import { BsBookmark } from "react-icons/bs";
+import api from "../../../../helpers/api";
+import { registerNotificationCallback } from "../../../../helpers/WebSocketService";
+import { useNotifications } from "../navbar/Notification/NotificationContext";
 
-const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onCommentInputChange }) => {
+const PostItem = ({
+  post,
+  formatDateTime,
+  handleCommentSubmit,
+  commentInput,
+  onCommentInputChange,
+}) => {
+  const [likeCount, setLikeCount] = useState(
+    post.likes ? post.likes.length : 0
+  );
 
-  const [likeCount, setLikeCount] = useState(post.likes.length);
   const [liked, setLiked] = useState(false);
-  const { addNotification } = useNotifications(); 
+  const { addNotification } = useNotifications();
 
-
-  // Hàm kiểm tra trạng thái "liked"
   const checkLikedStatus = () => {
     const email = sessionStorage.getItem("email");
-    const userHasLiked = post.likes.some((like) => like.user.emailId === email);
+    const userHasLiked =
+      Array.isArray(post.likes) &&
+      post.likes.some((like) => like.user.emailId === email);
     setLiked(userHasLiked);
   };
 
@@ -31,8 +39,8 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
   useEffect(() => {
     const wrappedHandleNotification = (notification) => {
       const currentUserId = parseInt(sessionStorage.getItem("userId"));
-      
-      // const postIdFromNotification = notification.data.postId; 
+
+      // const postIdFromNotification = notification.data.postId;
       if (currentUserId === notification.data.receiverId) {
         const newNotification = {
           senderId: notification.data.senderId,
@@ -41,27 +49,26 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
           createdAt: new Date(), // Add current date as createdAt
           type: notification.type,
           postId: notification.data.postId,
-      };
+        };
 
         switch (notification.type) {
-          case 'COMMENT':
+          case "COMMENT":
             addNotification(newNotification);
             break;
 
-          case 'LIKE':
+          case "LIKE":
             addNotification(newNotification);
             break;
 
-            
           default:
-            console.warn('Unhandled notification type:', notification.type);
+            console.warn("Unhandled notification type:", notification.type);
         }
       }
     };
-  
+
     // Register the callback
     registerNotificationCallback(wrappedHandleNotification);
-  
+
     // Cleanup on component unmount
     return () => {
       registerNotificationCallback(null); // Ensure callback is unregistered
@@ -81,18 +88,21 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
       }
       setLiked(!liked);
     } catch (error) {
-      console.error('Error liking/unliking post:', error);
+      console.error("Error liking/unliking post:", error);
     }
   }, [liked, post.id]);
-
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
         <div className={classes.top}>
           <div className={classes.topLeft}>
-            <img src={profileUserImg} className={classes.profileUserImg} alt="Profile" />
+            <img
+              src={profileUserImg}
+              className={classes.profileUserImg}
+              alt="Profile"
+            />
             <div className={classes.profileMetadata}>
-              <span>{post.user.employee.userName}</span>
+              <span>{post.user?.employee?.userName}</span>
               <span>{formatDateTime(post.postTime)}</span>
             </div>
           </div>
@@ -108,7 +118,7 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
           <div className={classes.controlsLeft}>
             <AiOutlineHeart
               onClick={handleLikeClick}
-              style={{ color: liked ? 'pink' : 'black' }}
+              style={{ color: liked ? "pink" : "black" }}
             />
             <span className={classes.likeCount}>{likeCount}</span>
             <BiMessageRounded />
@@ -119,15 +129,21 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
         </div>
 
         <div className={classes.comments}>
-          {post.comment.map((comment, commentIndex) => (
+          {post.comment?.map((comment, commentIndex) => (
             <div key={commentIndex} className={classes.comment}>
               <div className={classes.commentLeft}>
-                <img src={profileUserImg} className={classes.commentImg} alt="Commenter" />
+                <img
+                  src={profileUserImg}
+                  className={classes.commentImg}
+                  alt="Commenter"
+                />
                 <div className={classes.commentData}>
                   {comment.user && comment.user.employee && (
                     <span>{comment.user.employee.userName}</span>
                   )}
-                  <span className={classes.commentTimeago}>{formatDateTime(comment.commentTime)}</span>
+                  <span className={classes.commentTimeago}>
+                    {formatDateTime(comment.commentTime)}
+                  </span>
                 </div>
                 <div className={classes.commentText}>{comment.content}</div>
               </div>
@@ -147,10 +163,14 @@ const PostItem = ({ post, formatDateTime, handleCommentSubmit, commentInput, onC
             value={commentInput}
             onChange={(e) => onCommentInputChange(e.target.value)}
           />
-          <button onClick={(e) => {
-            e.preventDefault();
-            handleCommentSubmit(post.id, commentInput);
-          }}>Post</button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handleCommentSubmit(post.id, commentInput);
+            }}
+          >
+            Post
+          </button>
         </div>
       </div>
     </div>

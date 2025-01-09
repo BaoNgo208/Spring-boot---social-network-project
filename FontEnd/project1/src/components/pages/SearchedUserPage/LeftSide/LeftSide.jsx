@@ -1,9 +1,9 @@
 import React from "react";
-import classes from "./suggestedUsers.module.css";
+import classes from "./LeftSide.module.css";
 import profileUserImg from "../../../../assests/woman.jpg";
 import man from "../../../../assests/man.jpg";
 
-const SuggestedUsers = () => {
+const LeftSide = () => {
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
@@ -54,4 +54,4 @@ const SuggestedUsers = () => {
   );
 };
 
-export default SuggestedUsers;
+export default LeftSide;

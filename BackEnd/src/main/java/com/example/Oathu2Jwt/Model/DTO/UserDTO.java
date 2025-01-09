@@ -13,8 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-
-public class EmployeeDTO {
+public class UserDTO {
 
     @NotEmpty(message = "User Name must not be empty")
     private String userName;

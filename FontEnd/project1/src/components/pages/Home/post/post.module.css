@@ -1,6 +1,6 @@
 .container {
     min-height: 650px;
-    width: 100%;
+    width: 90%;
     margin-bottom: 100px;
 }
 
@@ -10,7 +10,7 @@
     padding-bottom: 1rem;
     height: 100%;
     background-color: #ece7e7;
-    width: 90%;
+    width: 100%;
 }
 
 /* top */

@@ -1,62 +1,87 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
 import com.example.Oathu2Jwt.Exception.User.UserNotFoundException;
+import com.example.Oathu2Jwt.Model.DTO.SearchedUserInfoDto;
+import com.example.Oathu2Jwt.Model.DTO.UserDTO;
 import com.example.Oathu2Jwt.Model.Entity.*;
-import com.example.Oathu2Jwt.Model.Entity.User.EmployeeEntity;
+import com.example.Oathu2Jwt.Model.Entity.User.UserEntity;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Model.Entity.User.UserRelationship;
 import com.example.Oathu2Jwt.Repository.*;
-import com.example.Oathu2Jwt.Service.EmployeeService;
+import com.example.Oathu2Jwt.Service.UserService;
 import com.example.Oathu2Jwt.Util.Graph.Graph;
 import com.example.Oathu2Jwt.Util.Graph.Vertex;
+import com.example.Oathu2Jwt.Util.Mapper.Mapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import com.example.Oathu2Jwt.Util.Graph.Queue;
 
 @Service
-@RequiredArgsConstructor
-public class EmployeeServiceImpl implements EmployeeService {
-    private final EmployeeRepo employeeRepo;
+public class UserServiceImpl implements UserService {
+    private final UserRepo userRepo;
     private final SalaryRepo salaryRepo;
     private final UserInfoRepo userInfoRepo;
-
+    @Qualifier("jdkRedisTemplate")
+    private final RedisTemplate<String,Object> redisTemplate;
     private final UserRelationshipRepo userRelationshipRepo;
+    private final Mapper<UserEntity, UserDTO> userDTOMapper;
 
+    public UserServiceImpl(UserRepo userRepo, SalaryRepo salaryRepo, UserInfoRepo userInfoRepo,
+                           UserRelationshipRepo userRelationshipRepo,
+                           @Qualifier("jdkRedisTemplate") RedisTemplate<String, Object> redisTemplate,
+                           Mapper<UserEntity,UserDTO> userDTOMapper) {
+        this.userRepo = userRepo;
+        this.salaryRepo = salaryRepo;
+        this.userInfoRepo = userInfoRepo;
+        this.userRelationshipRepo = userRelationshipRepo;
+        this.redisTemplate = redisTemplate;
+        this.userDTOMapper = userDTOMapper;
+    }
     @Override
     public UserInfoEntity getUserByEmail(String email) {
         return  userInfoRepo.findByEmailId(email)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found"));
+                .orElseThrow(()-> new UserNotFoundException("user not found"));
     }
 
     @Override
     @Transactional
-    public EmployeeEntity updateEmployee(String id, EmployeeEntity employee) {
-            Salary salary = salaryRepo.findBySalary(employee.getSalary().getSalary());
-            return employeeRepo.findById(Long.parseLong(id)).map(existingEmployee -> {
-                Optional.ofNullable(employee.getDateOfBirth()).ifPresent(existingEmployee::setDateOfBirth);
-                Optional.ofNullable(employee.getMobileNumber()).ifPresent(existingEmployee::setMobileNumber);
-                Optional.ofNullable(employee.getUserName()).ifPresent(existingEmployee::setUserName);
+    public UserEntity updateEmployee(String id, UserEntity user) {
+            Salary salary = salaryRepo.findBySalary(user.getSalary().getSalary());
+            return userRepo.findById(Long.parseLong(id)).map(existingEmployee -> {
+                Optional.ofNullable(user.getDateOfBirth()).ifPresent(existingEmployee::setDateOfBirth);
+                Optional.ofNullable(user.getMobileNumber()).ifPresent(existingEmployee::setMobileNumber);
+                Optional.ofNullable(user.getUserName()).ifPresent(existingEmployee::setUserName);
                 existingEmployee.setSalary(salary);
-                return employeeRepo.save(existingEmployee);
+                return userRepo.save(existingEmployee);
             }).orElseThrow(() -> new UserNotFoundException("User not found"));
 
     }
-
 
 
     @Override
     public List<UserInfoEntity> getAddFriendRequestList(String email) {
             UserInfoEntity userInfo = userInfoRepo.findByEmailId(email)
                     .orElseThrow(
-                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"post not found ")
+                            () -> new UserNotFoundException("user not found ")
                     );
             List<UserRelationship> userRelationshipList = userRelationshipRepo.findByAddFriendRequest(userInfo.getId());
             if(userRelationshipList.isEmpty()) {
@@ -119,6 +144,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
     }
+
+
+    public List<FriendListAndMutualFriend> readFromRedis(String key) {
+        Object redisValue = redisTemplate.opsForValue().get(key);
+
+        if (redisValue == null) {
+            return Collections.emptyList();
+        }
+
+        // Ép kiểu giá trị đọc từ Redis
+        if (redisValue instanceof List) {
+            return (List<FriendListAndMutualFriend>) redisValue;
+        }
+
+        throw new IllegalStateException("Dữ liệu trong Redis không đúng định dạng!");
+    }
+
     @Override
     @Cacheable(value = "friends" , key = "#emailId")
     public List<FriendListAndMutualFriend> getFriendListAndMutualFriend(String emailId) {
@@ -129,9 +171,60 @@ public class EmployeeServiceImpl implements EmployeeService {
             friendListAndMutualFriends.add(new FriendListAndMutualFriend(userWithUserMutualFriend.getMutualFriend()
                     ,userFriend,userWithUserMutualFriend.getMututalFriendList()));
         }
-
         return friendListAndMutualFriends;
     }
+
+    @Override
+    public Page<SearchedUserInfoDto> getSearchResult(String email, String username, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserInfoEntity> result = userInfoRepo.findByEmployeeUserName(username, pageable);
+
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Username not found");
+        }
+
+        String redisKey = "friends::" + email;
+        System.out.println("email:" + redisKey);
+
+        Object redisValue = redisTemplate.opsForValue().get(redisKey);
+
+
+        List<FriendListAndMutualFriend> redisList = new ArrayList<>();
+        if (redisValue != null) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
+                String jsonValue = objectMapper.writeValueAsString(redisValue);
+                redisList = objectMapper.readValue(jsonValue,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, FriendListAndMutualFriend.class));
+            } catch (Exception e) {
+                System.err.println("Lỗi khi deserialize dữ liệu từ Redis: " + e.getMessage());
+            }
+        }
+        List<FriendListAndMutualFriend> finalRedisList = redisList;
+        List<SearchedUserInfoDto> searchedUserInfoList = result.getContent().stream()
+                .map(user -> {
+                    FriendListAndMutualFriend friendData = finalRedisList.stream()
+                            .filter(friend -> friend.getUserInfoEntity().getAccName().equals(user.getAccName()))
+                            .findFirst()
+                            .orElse(null);
+
+                    boolean existsInRedis = friendData != null;
+                    int mutualFriendCount = friendData != null ? friendData.getMutualFriend() : 0;
+
+                    return new SearchedUserInfoDto(
+                            user.getEmailId(),
+                            user.getAccName(),
+                            userDTOMapper.mapTo(user.getEmployee()),
+                            mutualFriendCount,
+                            existsInRedis || user.getEmailId().equals(email)
+                    );
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(searchedUserInfoList, pageable, result.getTotalElements());
+    }
+
 
     @Override
     @Caching(evict = {
@@ -196,14 +289,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-    @Override
-    public List<UserInfoEntity> getSearchResult(String username) {
-            List<UserInfoEntity> result = userInfoRepo.findByEmployeeUserName(username);
-            if(result.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Username not found");
-            }
-            return result;
-    }
 
 
     private FriendListAndMutualFriend calculateCommonFriendsCount(List<UserInfoEntity> friendsOfUser, UserInfoEntity user) {
@@ -243,7 +328,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     private List<FriendListAndMutualFriend> findMaxCommonFriendsUsers(String emailId,Map<UserInfoEntity, Integer> commonFriendsCountMap) {
         List<Map.Entry<UserInfoEntity, Integer>> sortedEntries = new ArrayList<>(commonFriendsCountMap.entrySet());
         sortedEntries.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
-
         List<FriendListAndMutualFriend> maxCommonFriendsUsers = new ArrayList<>();
         int currentCount = 0;
 
@@ -258,7 +342,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 break;
             }
         }
-
         return maxCommonFriendsUsers;
     }
 

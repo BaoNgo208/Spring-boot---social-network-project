@@ -68,6 +68,7 @@ public class AuthService {
                     .accessTokenExpiry(15 * 60)
                     .userName(userInfoEntity.getEmployee().getUserName())
                     .userId(userInfoEntity.getId())
+                    .accName(userInfoEntity.getAccName())
                     .refreshToken(refreshToken)
                     .tokenType(TokenType.Bearer)
                     .build();
@@ -90,17 +91,16 @@ public class AuthService {
 
         final String refreshToken = authorizationHeader.substring(7);
 
-        //Find refreshToken from database and should not be revoked : Same thing can be done through filter.
+
         var refreshTokenEntity = refreshTokenRepo.findByRefreshToken(refreshToken)
                 .filter(tokens-> !tokens.isRevoked())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Refresh token revoked"));
 
         UserInfoEntity userInfoEntity = refreshTokenEntity.getUser();
 
-        //Now create the Authentication object
+
         Authentication authentication =  createAuthenticationObject(userInfoEntity);
 
-        //Use the authentication object to generate new accessToken as the Authentication object that we will have may not contain correct role.
         String accessToken = jwtTokenGenerator.generateAccessToken(authentication);
 
         return  AuthResponseDto.builder()
@@ -112,12 +112,10 @@ public class AuthService {
     }
 
     private static Authentication createAuthenticationObject(UserInfoEntity userInfoEntity) {
-        // Extract user details from UserDetailsEntity
         String username = userInfoEntity.getEmailId();
         String password = userInfoEntity.getPassword();
         String roles = userInfoEntity.getRoles();
 
-        // Extract authorities from roles (comma-separated)
         String[] roleArray = roles.split(",");
         GrantedAuthority[] authorities = Arrays.stream(roleArray)
                 .map(role -> (GrantedAuthority) role::trim)
@@ -137,7 +135,6 @@ public class AuthService {
 
             Authentication authentication = createAuthenticationObject(userInfoEntity);
             System.out.println("user auth: " + authentication.getName());
-            // Generate a JWT token
             String accessToken = jwtTokenGenerator.generateAccessToken(authentication);
             String refreshToken = jwtTokenGenerator.generateRefreshToken(authentication);
 

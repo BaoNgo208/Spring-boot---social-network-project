@@ -32,6 +32,9 @@ public class AuthResponseDto {
     @JsonProperty("user_Id")
     private Long userId;
 
+    @JsonProperty("acc_name")
+    private String accName;
+
 
 
 }
