@@ -22,4 +22,5 @@ public class PostDTO {
     private List<CommentDTO> comment;
     private List<UpdateHistoryDTO> updateHistories;
     private List<LikeDTO> likes;
+    private String imageUrl;
 }

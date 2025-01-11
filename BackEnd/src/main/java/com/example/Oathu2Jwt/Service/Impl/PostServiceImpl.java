@@ -44,6 +44,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Post savePost(Post post) {
+        return postRepo.save(post);
+    }
+
+    @Override
     public Post getPostById(String id) {
         return postRepo.findById(Long.parseLong(id))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"post not found"));

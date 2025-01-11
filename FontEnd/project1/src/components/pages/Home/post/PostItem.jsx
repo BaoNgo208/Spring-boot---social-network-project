@@ -22,6 +22,7 @@ const PostItem = ({
 
   const [liked, setLiked] = useState(false);
   const { addNotification } = useNotifications();
+  console.log("detail post:", post);
 
   const checkLikedStatus = () => {
     const email = sessionStorage.getItem("email");
@@ -108,10 +109,11 @@ const PostItem = ({
           </div>
           <HiOutlineDotsVertical size={25} />
         </div>
-
         <div className={classes.center}>
           <div className={classes.desc}>{post.content}</div>
-          <img src={profileUserImg} className={classes.postImg} alt="Post" />
+          {post.imageUrl && (
+            <img src={post.imageUrl} className={classes.postImg} alt="Post" />
+          )}
         </div>
 
         <div className={classes.controls}>

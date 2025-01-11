@@ -10,7 +10,7 @@ import java.util.List;
 public interface PostService {
 
     public UserInfoEntity getPostOwner(Long postId);
-
+    public Post savePost(Post post);
     public Post getPostById(String id);
 
     public Post createPost(String id , Post post);

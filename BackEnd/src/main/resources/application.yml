@@ -28,3 +28,11 @@ logging:
 jwt:
   rsa-private-key: classpath:certs/privateKey.pem
   rsa-public-key: classpath:certs/publicKey.pem
+
+minio:
+  url: http://localhost:9000
+  access:
+    name: minioadmin
+    secret: minioadmin
+  bucket:
+    name: mybucket

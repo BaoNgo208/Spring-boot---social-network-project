@@ -39,4 +39,7 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeEntity> likes;
+
+    @Column(nullable = true)
+    private String imageUrl;
 }

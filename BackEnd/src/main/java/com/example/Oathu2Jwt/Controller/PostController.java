@@ -7,17 +7,17 @@ import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.CommentNotificatio
 import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.Notification;
 import com.example.Oathu2Jwt.Model.MongoDBEntity.Notification.NotificationType;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
-import com.example.Oathu2Jwt.Service.LikeService;
-import com.example.Oathu2Jwt.Service.NotificationService;
-import com.example.Oathu2Jwt.Service.PostService;
-import com.example.Oathu2Jwt.Service.UserService;
+import com.example.Oathu2Jwt.Service.*;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.Date;
@@ -35,18 +35,36 @@ public class PostController {
     private final LikeService likeService;
     private final PostService postService;
     private final NotificationService notificationService;
-
+    private final MinIOService minIOService;
     private final SimpMessagingTemplate messagingTemplate;
 
 
-    @PostMapping("/create")
-    public ResponseEntity<PostDTO> createPost(Principal principal,
-                                              @RequestBody PostDTO postDTO ) {
-        Post post = postMapper.mapFrom(postDTO);
-        System.out.println("principal name:" + principal.getName());
-        Post createdPost = postService.createPost(principal.getName(),post);
-        return new ResponseEntity<PostDTO>(postMapper.mapTo(createdPost), HttpStatus.CREATED);
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PostDTO> createPost(
+            Principal principal,
+            @RequestParam("post") String postJson,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        try {
+            PostDTO postDTO = new ObjectMapper().readValue(postJson, PostDTO.class);
+
+            Post post = postMapper.mapFrom(postDTO);
+
+            Post createdPost = postService.createPost(principal.getName(), post);
+
+            if (file != null && !file.isEmpty()) {
+                String fileUrl = minIOService.upLoadFile(file, "mybucket");
+                createdPost.setImageUrl(fileUrl);
+                postService.savePost(createdPost);
+            }
+
+            return new ResponseEntity<>(postMapper.mapTo(createdPost), HttpStatus.CREATED);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
 
     @GetMapping("/get/{id}")
 

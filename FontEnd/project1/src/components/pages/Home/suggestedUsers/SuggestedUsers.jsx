@@ -18,6 +18,7 @@ const SuggestedUsers = () => {
           <h3 className={classes.title}>Recommended users to Follow</h3>
           <div className={classes.suggestedUser}>
             <img src={man} className={classes.imgUser} alt="" />
+
             <div className={classes.suggestedUserData}>
               <span>John Doe</span>
               <span className={classes.suggestedMsg}>Suggested to you</span>
