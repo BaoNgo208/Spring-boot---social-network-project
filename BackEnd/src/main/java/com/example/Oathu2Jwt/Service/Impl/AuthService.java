@@ -1,12 +1,14 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
 import com.example.Oathu2Jwt.Config.JwtConfig.JwtTokenGenerator;
-import com.example.Oathu2Jwt.Exception.User.UserNotFoundException;
-import com.example.Oathu2Jwt.Model.DTO.AuthResponseDto;
+import com.example.Oathu2Jwt.Exception.UserNotFoundException;
+import com.example.Oathu2Jwt.Model.DTO.*;
 import com.example.Oathu2Jwt.Model.Entity.*;
+import com.example.Oathu2Jwt.Model.Entity.User.UserEntity;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Repository.RefreshTokenRepo;
 import com.example.Oathu2Jwt.Repository.UserInfoRepo;
+import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class AuthService {
     private final UserInfoRepo userInfoRepo;
     private final JwtTokenGenerator jwtTokenGenerator;
     private final RefreshTokenRepo refreshTokenRepo;
+    private final Mapper<UserEntity, UserDTO> mapper;
 
 
     private void saveUserRefreshToken(UserInfoEntity userInfoEntity, String refreshToken) {
@@ -57,6 +60,12 @@ public class AuthService {
                     .orElseThrow(() -> new UserNotFoundException(
                             "User not found hehe"
                     ));
+            UserInfoDTO2 userInfoDTO = new UserInfoDTO2(
+                    userInfoEntity.getId(),
+                    userInfoEntity.getEmailId(),
+                    userInfoEntity.getAccName(),
+                    mapper.mapTo(userInfoEntity.getEmployee())
+            );
             String accessToken = jwtTokenGenerator.generateAccessToken(authentication);
             String refreshToken = jwtTokenGenerator.generateRefreshToken(authentication);
             saveUserRefreshToken(userInfoEntity,refreshToken);
@@ -69,6 +78,7 @@ public class AuthService {
                     .userName(userInfoEntity.getEmployee().getUserName())
                     .userId(userInfoEntity.getId())
                     .accName(userInfoEntity.getAccName())
+                    .userInfo(userInfoDTO)
                     .refreshToken(refreshToken)
                     .tokenType(TokenType.Bearer)
                     .build();

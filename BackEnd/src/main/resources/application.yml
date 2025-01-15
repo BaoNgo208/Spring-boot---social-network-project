@@ -3,6 +3,10 @@ spring:
     type: redis
     redis:
       cache-null-values: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/jwtproject
@@ -36,3 +40,6 @@ minio:
     secret: minioadmin
   bucket:
     name: mybucket
+
+
+

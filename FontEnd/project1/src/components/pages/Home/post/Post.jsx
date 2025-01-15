@@ -20,8 +20,6 @@ const Post = ({ posts: propPosts = [], className }) => {
             !posts.some((existingPost) => existingPost.id === post.id)
         );
 
-      console.log("new Post after filtering:", newPosts);
-      console.log("new Post:", newPosts);
       // Only update the posts state if there are new posts to add
       if (newPosts.length > 0) {
         setPosts((prevPosts) => [...newPosts, ...prevPosts]);

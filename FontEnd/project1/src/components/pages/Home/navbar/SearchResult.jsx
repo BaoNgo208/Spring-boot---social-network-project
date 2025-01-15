@@ -3,10 +3,18 @@ import profileUserImg from "../../../../assests/woman.jpg";
 import { useNavigate } from "react-router-dom";
 export const SearchResult = ({ result }) => {
   const navigate = useNavigate();
-
+  console.log(result);
   const handleProfile = () => {
+    const userInfoDTOWithUser = {
+      ...result.userInfoDTO,
+      user: result.userInfoDTO.employee,
+    };
+
+    delete userInfoDTOWithUser.employee;
+
     const queryParams = new URLSearchParams({
       emailId: result.userInfoDTO.emailId,
+      user: encodeURIComponent(JSON.stringify(userInfoDTOWithUser)),
     });
     sessionStorage.setItem("isFriend", result.isFriend);
     navigate(`/profile?${queryParams.toString()}`);

@@ -18,9 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -154,15 +156,15 @@ public class PostController {
     }
 
     @GetMapping("/get/recommend/post")
-
-    public ResponseEntity<Page<PostDTO>> getRecommendPosts(
+    public ResponseEntity<?> getRecommendPosts(
             Principal principal,
             @RequestParam int page,
             @RequestParam int size) {
-        Page<Post> posts = postService.getRecommendPosts(principal.getName(), page, size);
-        Page<PostDTO> postDTOs = posts.map(postMapper::mapTo);
-        postService.saveUserPostToRedisCache(principal.getName());
-        return ResponseEntity.ok(postDTOs);
+
+            Page<Post> posts = postService.getRecommendPosts(principal.getName(), page, size);
+            Page<PostDTO> postDTOs = posts.map(postMapper::mapTo);
+            postService.saveUserPostToRedisCache(principal.getName());
+            return ResponseEntity.ok(postDTOs);
     }
 
     @GetMapping("/get/profile")

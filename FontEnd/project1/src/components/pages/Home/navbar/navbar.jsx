@@ -99,13 +99,18 @@ const Navbar = () => {
 
       sessionStorage.clear();
       navigate("/");
+      window.location.reload();
     } catch (error) {
       console.error("Error logging out:", error);
     }
   };
-
+  console.log("test userInfo:", JSON.parse(sessionStorage.getItem("userInfo")));
   const handleProfile = () => {
-    navigate(`/profile`);
+    const queryParams = new URLSearchParams({
+      email: sessionStorage.getItem("email"),
+      user: sessionStorage.getItem("userInfo"),
+    });
+    navigate(`/profile?${queryParams.toString()}`);
   };
 
   return (

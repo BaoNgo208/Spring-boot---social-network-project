@@ -1,6 +1,7 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
-import com.example.Oathu2Jwt.Exception.User.UserNotFoundException;
+import com.example.Oathu2Jwt.Exception.FriendListEmptyException;
+import com.example.Oathu2Jwt.Exception.UserNotFoundException;
 import com.example.Oathu2Jwt.Model.Entity.Comment;
 import com.example.Oathu2Jwt.Model.Entity.Post;
 import com.example.Oathu2Jwt.Model.Entity.UpdateHistory;
@@ -110,18 +111,22 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getRecommendPosts(String emailId, int page, int size) {
-        List<UserInfoEntity> userAndFriends = userService.getFriendList(emailId);
+            List<UserInfoEntity> userAndFriends = userService.getFriendList(emailId);
+
+
+        if(userAndFriends.isEmpty()) {
+            throw new FriendListEmptyException("Friend list is empty");
+        }
+
         userAndFriends.add(
-                userInfoRepo.findByEmailId(emailId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"))
-        );
+                    userInfoRepo.findByEmailId(emailId).orElseThrow(() -> new UserNotFoundException("User not found"))
+            );
+            List<Long> userIds = userAndFriends.stream()
+                    .map(UserInfoEntity::getId)
+                    .collect(Collectors.toList());
 
-        List<Long> userIds = userAndFriends.stream()
-                .map(UserInfoEntity::getId)
-                .collect(Collectors.toList());
-
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"postTime"));
-        return postRepo.findByUserIdIn(userIds, pageable);
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"postTime"));
+            return postRepo.findByUserIdIn(userIds, pageable);
     }
 
     @Override

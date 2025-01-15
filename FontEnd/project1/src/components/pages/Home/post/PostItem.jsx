@@ -22,7 +22,6 @@ const PostItem = ({
 
   const [liked, setLiked] = useState(false);
   const { addNotification } = useNotifications();
-  console.log("detail post:", post);
 
   const checkLikedStatus = () => {
     const email = sessionStorage.getItem("email");
@@ -111,8 +110,17 @@ const PostItem = ({
         </div>
         <div className={classes.center}>
           <div className={classes.desc}>{post.content}</div>
-          {post.imageUrl && (
-            <img src={post.imageUrl} className={classes.postImg} alt="Post" />
+          {post.imageUrl && post.imageUrl.endsWith(".mp4") ? (
+            <video
+              className={classes.postVideo}
+              controls
+              src={post.imageUrl}
+              alt="Post Video"
+            />
+          ) : (
+            post.imageUrl && (
+              <img src={post.imageUrl} className={classes.postImg} alt="Post" />
+            )
           )}
         </div>
 

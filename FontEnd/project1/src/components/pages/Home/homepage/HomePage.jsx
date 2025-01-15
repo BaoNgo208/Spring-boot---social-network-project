@@ -42,10 +42,18 @@ export const Home = () => {
   } = useQuery({
     queryKey: "info",
     queryFn: async () => {
-      const response = await api.get(
-        "http://localhost:8080/employee/get/friendList"
-      );
-      return response.data;
+      try {
+        const response = await api.get(
+          "http://localhost:8080/employee/get/friendList"
+        );
+        if (response.status === 404) {
+          throw new Error("No content available.");
+        }
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching friend list:", error);
+        throw error;
+      }
     },
   });
 
@@ -59,10 +67,15 @@ export const Home = () => {
   } = useInfiniteQuery({
     queryKey: "posts",
     queryFn: async ({ pageParam = 0 }) => {
-      const response = await api.get(
-        `http://localhost:8080/post/get/recommend/post?page=${pageParam}&size=10`
-      );
-      return response.data;
+      try {
+        const response = await api.get(
+          `http://localhost:8080/post/get/recommend/post?page=${pageParam}&size=10`
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+        throw new Error("Failed to fetch posts. Please try again later.");
+      }
     },
     getNextPageParam: (lastPage, allPages) => {
       const nextPage = allPages.length;
@@ -124,11 +137,11 @@ export const Home = () => {
     setSelectedFriend(null);
   };
 
-  useEffect(() => {
-    if (isErrorInfo || isErrorPosts) {
-      window.location.href = "/";
-    }
-  }, [isLoadingInfo, isLoadingPosts, isErrorInfo, isErrorPosts]);
+  // useEffect(() => {
+  //   if (isErrorInfo || isErrorPosts) {
+  //     window.location.href = "/";
+  //   }
+  // }, [isLoadingInfo, isLoadingPosts, isErrorInfo, isErrorPosts]);
 
   const handleScroll = useCallback(() => {
     if (
@@ -191,7 +204,28 @@ export const Home = () => {
   );
 
   if (isLoadingInfo || isLoadingPosts) return <div>Loading...</div>;
-  if (isErrorInfo || isErrorPosts) return <div>Error fetching data</div>;
+  const renderPosts = () => {
+    if (isErrorPosts) {
+      return <div>Hiện chưa có bạn bè.</div>;
+    }
+
+    return <Post posts={newFeeds} className={classes.posts} />;
+  };
+
+  const renderFriendList = () => {
+    if (isErrorInfo) {
+      return <div>Hiện chưa có bạn bè.</div>;
+    }
+    return (
+      <div className={classes.rightside}>
+        <Rightside
+          friends={info.length > 0 ? info : []}
+          onFriendClick={handleFriendClick}
+          unreadMessages={unreadMessages}
+        />
+      </div>
+    );
+  };
 
   const selectedFriendMessages = sortedMessages.filter(
     (msg) =>
@@ -215,7 +249,7 @@ export const Home = () => {
             onPost={handlePost}
             style={{ position: "relative", zIndex: "1" }}
           />
-          <Post posts={newFeeds} />
+          {renderPosts()}
           <div className={classes.chatSection}>
             {selectedFriend && (
               <Chat
@@ -229,14 +263,14 @@ export const Home = () => {
             )}
           </div>
         </div>
-
-        <div className={classes.rightside}>
+        {renderFriendList()}
+        {/* <div className={classes.rightside}>
           <Rightside
-            friends={info}
+            friends={info.length > 0 ? info : []}
             onFriendClick={handleFriendClick}
             unreadMessages={unreadMessages}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

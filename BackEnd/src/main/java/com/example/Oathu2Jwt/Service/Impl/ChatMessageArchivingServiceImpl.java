@@ -30,6 +30,7 @@ public class ChatMessageArchivingServiceImpl implements ChatMessageArchivingServ
     public void archiveOldChatMessage() {
         Date thirtyDaysAgo = new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30));
         List<ChatMessage> oldMessages = chatMessageRepo.findByCreatedAtBefore(thirtyDaysAgo);
+        System.out.println("archived chat size:" + oldMessages.size());
         for (ChatMessage message : oldMessages) {
             ArchivedChatMessages archivedChatMessage = ArchivedChatMessages.builder()
                     .id(message.getId())

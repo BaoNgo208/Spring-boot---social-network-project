@@ -170,7 +170,14 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .addLogoutHandler(logoutHandlerService)
-                        .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            // Clear SecurityContext
+                            SecurityContextHolder.clearContext();
+
+                            // Thêm logic xóa dữ liệu phía client (sessionStorage, localStorage, v.v.)
+                            response.setHeader("Clear-Site-Data", "cookies, storage, cache");  // Xóa dữ liệu client-side
+
+                        })
                 )
                 .exceptionHandling(ex -> {
                     log.error("[SecurityConfig:logoutSecurityFilterChain] Exception due to :{}",ex);

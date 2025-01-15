@@ -6,7 +6,6 @@ import "./SearchedUser.css";
 export const SearchedUser = ({ result }) => {
   const navigate = useNavigate();
   if (!result) {
-    // Xử lý khi không có kết quả
     return (
       <div className="no-result">
         <p>Không tìm thấy người dùng nào.</p>
@@ -15,10 +14,12 @@ export const SearchedUser = ({ result }) => {
   }
 
   const handleProfile = () => {
+    const encodedResult = encodeURIComponent(JSON.stringify(result));
     const queryParams = new URLSearchParams({
       emailId: result.emailId,
+      user: encodedResult,
     });
-    sessionStorage.setItem("isFriend", result.isFriend);
+
     navigate(`/profile?${queryParams.toString()}`);
   };
 

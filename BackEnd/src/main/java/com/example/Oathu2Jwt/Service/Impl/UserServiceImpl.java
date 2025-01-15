@@ -1,6 +1,6 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
-import com.example.Oathu2Jwt.Exception.User.UserNotFoundException;
+import com.example.Oathu2Jwt.Exception.*;
 import com.example.Oathu2Jwt.Model.DTO.SearchedUserInfoDto;
 import com.example.Oathu2Jwt.Model.DTO.UserDTO;
 import com.example.Oathu2Jwt.Model.Entity.*;
@@ -14,8 +14,6 @@ import com.example.Oathu2Jwt.Util.Graph.Vertex;
 import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
@@ -84,9 +82,10 @@ public class UserServiceImpl implements UserService {
                     .orElseThrow(
                             () -> new UserNotFoundException("user not found ")
                     );
+
             List<UserRelationship> userRelationshipList = userRelationshipRepo.findByAddFriendRequest(userInfo.getId());
             if(userRelationshipList.isEmpty()) {
-                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                 throw new FriendRequestEmptyException("User currently has no friend requests");
             }
             List<UserInfoEntity> addFriendRequests= new ArrayList<>();
             for(UserRelationship userRelationship : userRelationshipList) {
@@ -119,20 +118,19 @@ public class UserServiceImpl implements UserService {
     public String addFriend(String user,String accName) {
 
         UserInfoEntity pendingFirst = userInfoRepo.findByEmailId(user).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found")
+                () -> new UserNotFoundException("User not found")
         );
         UserInfoEntity pendingSecond= userInfoRepo.findByAccName(accName).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found")
+                () -> new UserNotFoundException("User not found")
         );
         UserRelationship userRelationship = new UserRelationship();
         if(!checkFriendRequestState(pendingFirst, pendingSecond)   ) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"request is already sent");
+            throw new FriendRequestAlreadySentException("request is already sent");
         }
         else {
             if(pendingFirst.getId() > pendingSecond.getId()) {
                 userRelationship.setUserFirstId(pendingSecond);
                 userRelationship.setUserSecondId(pendingFirst);
-                System.out.println("lon hon");
                 userRelationship.setType(Type.PENDING_SECOND_FIRST);
             }
             else {
@@ -154,7 +152,6 @@ public class UserServiceImpl implements UserService {
             return Collections.emptyList();
         }
 
-        // Ép kiểu giá trị đọc từ Redis
         if (redisValue instanceof List) {
             return (List<FriendListAndMutualFriend>) redisValue;
         }
@@ -181,11 +178,10 @@ public class UserServiceImpl implements UserService {
         Page<UserInfoEntity> result = userInfoRepo.findByEmployeeUserName(username, pageable);
 
         if (result.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Username not found");
+            throw new UserNotFoundException("Username not found");
         }
 
         String redisKey = "friends::" + email;
-        System.out.println("email:" + redisKey);
 
         Object redisValue = redisTemplate.opsForValue().get(redisKey);
 
@@ -236,7 +232,7 @@ public class UserServiceImpl implements UserService {
             })
     public List<FriendListAndMutualFriend>  acceptFriendRequest(String emailId, Long userSecondId) {
         UserInfoEntity userInfo = userInfoRepo.findByEmailId(emailId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         UserRelationship userRelationship;
         if(userInfo.getId() > userSecondId) {
              userRelationship = userRelationshipRepo.findByUserFirstId_IdAndUserSecondId_Id(userSecondId,userInfo.getId());
@@ -244,7 +240,7 @@ public class UserServiceImpl implements UserService {
         else {
             userRelationship = userRelationshipRepo.findByUserFirstId_IdAndUserSecondId_Id(userInfo.getId(),userSecondId);
             if(userRelationship.getType() == Type.FRIENDS) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"ALREADY ACCEPTED");
+                throw new AlreadyAcceptedFriendRequestException("ALREADY ACCEPTED");
             }
             userRelationship.setType(Type.FRIENDS);
         }
@@ -278,6 +274,9 @@ public class UserServiceImpl implements UserService {
         );
         List<UserInfoEntity> friendList = new ArrayList<>();
         List<UserRelationship> userRelationships = userRelationshipRepo.getAllFriendOfUser(user.getId());
+        if(userRelationships.isEmpty()) {
+            throw new FriendListEmptyException("User has no friends");
+        }
         for(UserRelationship userRelationship : userRelationships) {
             if(Objects.equals(userRelationship.getUserFirstId().getId(), user.getId())) {
                 friendList.add(userRelationship.getUserSecondId());

@@ -29,15 +29,17 @@
 }
 
 .addFriend {
-  height: 100%;
-  margin-top: 10px;
-  position: relative;
-  left: 450px;
+  height: 30%;
+  width: 100%;
+  margin-top: 6%;
+  margin-left: 26%;
+  display: flex;
   color: red;
 }
 
 .addFriend > button {
-  margin-left: 10px;
+  margin: 10px;
+  width: 25%;
 }
 
 .profile-picture {
