@@ -55,6 +55,8 @@ public class UserServiceImpl implements UserService {
         this.redisTemplate = redisTemplate;
         this.userDTOMapper = userDTOMapper;
     }
+
+
     @Override
     public UserInfoEntity getUserByEmail(String email) {
         return  userInfoRepo.findByEmailId(email)
@@ -222,20 +224,30 @@ public class UserServiceImpl implements UserService {
         return new PageImpl<>(searchedUserInfoList, pageable, result.getTotalElements());
     }
 
+    @Override
+    public UserInfoEntity getUserInfoById(Long id) {
+        return userInfoRepo.findById(id).orElseThrow(()-> new UserNotFoundException("user not found"));
+    }
+
 
     @Override
     @Caching(evict = {
             @CacheEvict(value = "friends", key = "#emailId"),
+            @CacheEvict(value = "friends", key = "#userSecondEmailId")
     },
             put = {
                     @CachePut(value = "friends", key = "#emailId"),
+                    @CachePut(value = "friends", key = "#userSecondEmailId")
             })
-    public List<FriendListAndMutualFriend>  acceptFriendRequest(String emailId, Long userSecondId) {
+    public List<FriendListAndMutualFriend>  acceptFriendRequest(String emailId, Long userSecondId,String userSecondEmailId ) {
         UserInfoEntity userInfo = userInfoRepo.findByEmailId(emailId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         UserRelationship userRelationship;
+        System.out.println("first:" + userInfo.getId());
+        System.out.println("second:" + userSecondId);
         if(userInfo.getId() > userSecondId) {
              userRelationship = userRelationshipRepo.findByUserFirstId_IdAndUserSecondId_Id(userSecondId,userInfo.getId());
+             userRelationship.setType(Type.FRIENDS);
         }
         else {
             userRelationship = userRelationshipRepo.findByUserFirstId_IdAndUserSecondId_Id(userInfo.getId(),userSecondId);

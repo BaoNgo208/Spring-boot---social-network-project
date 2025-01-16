@@ -3,52 +3,28 @@ import classes from "./suggestedUsers.module.css";
 import profileUserImg from "../../../../assests/woman.jpg";
 import man from "../../../../assests/man.jpg";
 
-const SuggestedUsers = () => {
+const SuggestedUsers = (props) => {
+  if (!props.recommendUsers) {
+    return null;
+  }
+  console.log(props.recommendUsers);
+
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
-        <div className={classes.myProfile}>
-          <img src={profileUserImg} className={classes.profileUserImg} alt="" />
-          <div className={classes.profileData}>
-            <span className={classes.name}>WebDevMania</span>
-            <span className={classes.shortBio}>Live is full of adventures</span>
-          </div>
-        </div>
         <div className={classes.suggestedUsers}>
-          <h3 className={classes.title}>Recommended users to Follow</h3>
-          <div className={classes.suggestedUser}>
-            <img src={man} className={classes.imgUser} alt="" />
-
-            <div className={classes.suggestedUserData}>
-              <span>John Doe</span>
-              <span className={classes.suggestedMsg}>Suggested to you</span>
-            </div>
-            <button className={classes.followBtn}>Follow</button>
-          </div>
-          <div className={classes.suggestedUser}>
-            <img src={man} className={classes.imgUser} alt="" />
-            <div className={classes.suggestedUserData}>
-              <span>John Doe</span>
-              <span className={classes.suggestedMsg}>Suggested to you</span>
-            </div>
-            <button className={classes.followBtn}>Follow</button>
-          </div>
-          <div className={classes.suggestedUser}>
-            <img src={man} className={classes.imgUser} alt="" />
-            <div className={classes.suggestedUserData}>
-              <span>John Doe</span>
-              <span className={classes.suggestedMsg}>Suggested to you</span>
-            </div>
-            <button className={classes.followBtn}>Follow</button>
-          </div>
-          <div className={classes.suggestedUser}>
-            <img src={man} className={classes.imgUser} alt="" />
-            <div className={classes.suggestedUserData}>
-              <span>John Doe</span>
-              <span className={classes.suggestedMsg}>Suggested to you</span>
-            </div>
-            <button className={classes.followBtn}>Follow</button>
-          </div>
+          {props.recommendUsers.map((user, index) => {
+            return (
+              <div className={classes.suggestedUser} key={index}>
+                <img src={man} className={classes.imgUser} alt="" />
+                <div className={classes.suggestedUserData}>
+                  <span>{user.userInfoDTO.employee.userName}</span>
+                  <span className={classes.suggestedMsg}>Suggested to you</span>
+                </div>
+                <button className={classes.followBtn}>Follow</button>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

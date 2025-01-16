@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Post createPost(String username, Post post) {
         UserInfoEntity user = userInfoRepo.findByEmailId(username).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found ")
+                () -> new UserNotFoundException("User not found ")
         );
         post.setComment(null);
         post.setPostTime(java.sql.Timestamp.valueOf(LocalDateTime.now().format(formatter)));
@@ -83,7 +83,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post comment(String username, String postId, Comment comment) {
         UserInfoEntity user = userInfoRepo.findByEmailId(username).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found ")
+                () -> new UserNotFoundException("User not found ")
         );
         Post post = getPostById(postId);
         comment.setCommentTime(java.sql.Timestamp.valueOf(LocalDateTime.now().format(formatter)));
@@ -155,6 +155,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void saveUserPostToRedisCache(String emailId) {
         String redisKey =  "user:"+emailId+":postIds";
+
 
         if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
             return;

@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
       >
         <Navbar />
       </div>
-      <div style={{ marginTop: "60px" }}>{children}</div> {/* Điều chỉnh marginTop nếu cần */}
+      <div style={{ marginTop: "60px" }}>{children}</div>
     </div>
   );
 };

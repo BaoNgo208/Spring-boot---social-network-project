@@ -59,7 +59,8 @@ public class UserController {
 
     @PostMapping("/accept-friend/request/{userId}")
     public List<FriendListAndMutualFriendDTO> acceptFriendRequest(@PathVariable("userId") String userId,Principal principal) {
-        return userService.acceptFriendRequest(principal.getName(),Long.parseLong(userId))
+        UserInfoEntity userInfo= userService.getUserInfoById(Long.parseLong(userId));
+        return userService.acceptFriendRequest(principal.getName(), userInfo.getId(),userInfo.getEmailId())
                 .stream().map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
     }
 

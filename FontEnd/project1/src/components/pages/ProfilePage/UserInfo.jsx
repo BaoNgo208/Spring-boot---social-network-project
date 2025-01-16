@@ -1,6 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import api from "../../../helpers/api";
+import "./UserInfo.css";
 const UserInfo = (props) => {
   const handleFriendCall = async () => {
     try {
@@ -10,7 +11,6 @@ const UserInfo = (props) => {
     } catch (err) {}
   };
 
-  console.log("userInfo:", props.userInfo);
   return (
     <div className="userInfoContainer">
       <div className="user-info">

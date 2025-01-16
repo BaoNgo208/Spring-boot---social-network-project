@@ -56,6 +56,14 @@
     background-color: #f5f5f5;
     border-top: 1px solid #ccc;
   }
+  .media {
+    width: 15%;
+  }
+  .media_button {
+    width: 50%;
+    height: 100%;
+    padding: 0;
+  }
   
   .input {
     flex: 1;
@@ -80,3 +88,22 @@
   .sendButton:active {
     background-color: #004080;
   }
+
+  .messageContent {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .imageContainer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .mediaImage {
+    max-width: 100%;
+    max-height: 300px;  /* Điều chỉnh theo yêu cầu */
+    object-fit: contain; /* Đảm bảo ảnh không bị méo */
+    border-radius: 8px;  /* Optional: border radius để ảnh trông mềm mại hơn */
+  }
+  

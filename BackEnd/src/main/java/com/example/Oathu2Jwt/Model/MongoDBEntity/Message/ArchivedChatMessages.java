@@ -1,6 +1,7 @@
 package com.example.Oathu2Jwt.Model.MongoDBEntity.Message;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -31,4 +32,8 @@ public class ArchivedChatMessages {
 
     @Indexed
     private Date archivedAt;
+
+
+    @Column(nullable = true)
+    private String mediaUrl;
 }

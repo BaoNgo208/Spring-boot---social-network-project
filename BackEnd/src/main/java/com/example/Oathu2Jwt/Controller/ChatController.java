@@ -24,6 +24,7 @@ public class ChatController {
     private final ChatMessageArchivingService chatMessageArchivingService;
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage) {
+
         chatMessageArchivingService.saveMessageToMongodbAndRedis(chatMessage);
         messagingTemplate.convertAndSend("/topic/chat", chatMessage);
     }
@@ -34,7 +35,6 @@ public class ChatController {
             @RequestParam("userId2") String userId2,
             @RequestParam("page") int page,
             @RequestParam("size") int size) {
-
         return chatMessageArchivingService.getMessagesBetweenUsers(userId1, userId2, page, size);
     }
 

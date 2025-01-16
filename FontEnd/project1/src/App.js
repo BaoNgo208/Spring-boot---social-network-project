@@ -41,7 +41,7 @@ const App = () => {
                                 <Route path="/home" element={<Layout><Home /></Layout>} />
                                 <Route path="/profile" element={<Layout><ProfileWrapper /></Layout>} /> {/* Sử dụng ProfileWrapper */}
                                 <Route path="/postDetail/:id" element={<PostDetailPage />} />
-                                <Route path='/search-results' element = {<SearchedUserPage/>} />
+                                <Route path='/search-results' element = {<Layout><SearchedUserPage/></Layout> } />
                             </Route>
                         </Routes>
                     </Router>

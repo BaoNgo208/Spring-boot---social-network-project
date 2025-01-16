@@ -49,7 +49,6 @@ const onConnected = () => {
 };
 
 const handleNotification = (notification) => {
-  // Xác định loại thông báo và xử lý tương ứng
   switch (notification.type) {
     case 'COMMENT':
       notificationCallback({ type: 'COMMENT', data: notification });
@@ -69,14 +68,18 @@ const onError = (error) => {
   console.log('WebSocket error:', error);
 };
 
-export const sendMessage = (messageContent, receiverId, senderId) => {
+
+
+export const sendMessage = (messageContent, receiverId, senderId, mediaUrl = "") => {
   if (messageContent && stompClient) {
     const chatMessage = {
       senderId: parseInt(senderId),
       content: messageContent,
       receiverId: parseInt(receiverId),
       createdAt: new Date().toISOString(), 
+      mediaUrl:mediaUrl
     };
+    console.log("chat message:" , chatMessage);
     stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(chatMessage));
   }
 };

@@ -19,6 +19,13 @@
     z-index: 1050;
     width: 50%;
 }
+.left {
+    position: sticky;
+    top: 5%; /* Đặt khoảng cách cố định từ đỉnh trang */
+    height: fit-content; /* Đảm bảo nội dung không bị kéo dài */
+    z-index: 1000; /* Ưu tiên hiển thị cao hơn */
+}
+
 
 .rightside {
     position: fixed;

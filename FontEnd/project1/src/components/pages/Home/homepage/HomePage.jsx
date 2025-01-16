@@ -15,6 +15,12 @@ import {
 import { usePostContext } from "../post/PostDetail/PostContext";
 import { useRef } from "react";
 
+const FetchRecommendUser = async () => {
+  const response = await api.get(
+    "http://localhost:8080/employee/get/getRecommendedFriend"
+  );
+  return response.data;
+};
 export const Home = () => {
   const [unreadMessages, setUnreadMessages] = useState({});
   const [allMessages, setAllMessages] = useState([]);
@@ -24,6 +30,7 @@ export const Home = () => {
   const { setPosts } = usePostContext();
   const chatContainerRef = useRef(null);
   const [messagePage, setMessagePage] = useState(0);
+  const [recommendUsers, setRecommendUsers] = useState();
 
   useEffect(() => {
     registerMessageCallback((messageObject) => {
@@ -56,6 +63,19 @@ export const Home = () => {
       }
     },
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await FetchRecommendUser();
+        setRecommendUsers(data);
+      } catch (err) {
+        console.error("Error fetching recommended users:", err);
+      }
+    };
+
+    fetchData();
+  }, []); // Chạy 1 lần khi homepage load
 
   const {
     data,
@@ -239,7 +259,7 @@ export const Home = () => {
     <div>
       <div className={classes.container}>
         <div className={classes.left}>
-          <SuggestedUsers />
+          <SuggestedUsers recommendUsers={recommendUsers} />
         </div>
 
         <div className="content" style={{ zIndex: "10" }}>
