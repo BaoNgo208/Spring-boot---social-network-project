@@ -1,5 +1,6 @@
 package com.example.Oathu2Jwt.Repository;
 
+import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Model.Entity.User.UserRelationship;
 import com.example.Oathu2Jwt.Model.Entity.User.UserRelationshipId;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,13 @@ public interface UserRelationshipRepo extends JpaRepository<UserRelationship, Us
           "WHERE (ur.userFirstId.Id = :givenId OR ur.userSecondId.Id = :givenId) " +
           "AND ur.type = 'FRIENDS'")
     public List<UserRelationship> getAllFriendOfUser(@Param("givenId") Long givenId);
+
+
+    @Query("SELECT uf " +
+            "FROM UserRelationship ur " +
+            "JOIN UserInfoEntity uf ON (ur.userFirstId = uf AND ur.userSecondId.id = :userId) " +
+            "   OR (ur.userSecondId = uf AND ur.userFirstId.id = :userId)")
+    List<UserInfoEntity> findFriendsByUserId(@Param("userId") Long userId);
+
+
 }

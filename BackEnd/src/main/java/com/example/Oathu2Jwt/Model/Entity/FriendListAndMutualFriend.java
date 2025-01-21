@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class FriendListAndMutualFriend   implements Serializable {
+public class FriendListAndMutualFriend  implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer mutualFriend ;
     private UserInfoEntity userInfoEntity;

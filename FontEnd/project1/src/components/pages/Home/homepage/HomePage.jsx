@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../../../helpers/api";
 import PostSection from "../posting/posting";
 import Chat from "../Chat/Chat";
+import Sidebar from "../SideBar/Sidebar";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   registerMessageCallback,
@@ -259,7 +260,7 @@ export const Home = () => {
     <div>
       <div className={classes.container}>
         <div className={classes.left}>
-          <SuggestedUsers recommendUsers={recommendUsers} />
+          <Sidebar recommendUsers={recommendUsers} />
         </div>
 
         <div className="content" style={{ zIndex: "10" }}>

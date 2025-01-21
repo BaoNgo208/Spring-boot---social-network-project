@@ -161,25 +161,14 @@ public class UserServiceImpl implements UserService {
         throw new IllegalStateException("Dữ liệu trong Redis không đúng định dạng!");
     }
 
-    @Override
-    @Cacheable(value = "friends" , key = "#emailId")
-    public List<FriendListAndMutualFriend> getFriendListAndMutualFriend(String emailId) {
-        List<UserInfoEntity> friendOfUser =getFriendList(emailId);
-        List<FriendListAndMutualFriend> friendListAndMutualFriends = new ArrayList<>();
-        for(UserInfoEntity userFriend : friendOfUser) {
-            FriendListAndMutualFriend userWithUserMutualFriend= calculateCommonFriendsCount(friendOfUser,userFriend);
-            friendListAndMutualFriends.add(new FriendListAndMutualFriend(userWithUserMutualFriend.getMutualFriend()
-                    ,userFriend,userWithUserMutualFriend.getMututalFriendList()));
-        }
-        return friendListAndMutualFriends;
-    }
 
     @Override
     public Page<SearchedUserInfoDto> getSearchResult(String email, String username, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<UserInfoEntity> result = userInfoRepo.findByEmployeeUserName(username, pageable);
+        Page<UserInfoEntity> result = userInfoRepo.findByEmployeeUserNameContaining(username, pageable);
 
         if (result.isEmpty()) {
+            System.out.println("is empty????");
             throw new UserNotFoundException("Username not found");
         }
 
@@ -208,8 +197,10 @@ public class UserServiceImpl implements UserService {
                             .findFirst()
                             .orElse(null);
 
+
                     boolean existsInRedis = friendData != null;
-                    int mutualFriendCount = friendData != null ? friendData.getMutualFriend() : 0;
+                    int mutualFriendCount = friendData != null ? friendData.getMutualFriend() : calculateCommonFriendsCount(getFriendList(email),user).getMutualFriend();
+                    System.out.println("mutual friend count:" + mutualFriendCount);
 
                     return new SearchedUserInfoDto(
                             user.getEmailId(),
@@ -239,7 +230,7 @@ public class UserServiceImpl implements UserService {
                     @CachePut(value = "friends", key = "#emailId"),
                     @CachePut(value = "friends", key = "#userSecondEmailId")
             })
-    public List<FriendListAndMutualFriend>  acceptFriendRequest(String emailId, Long userSecondId,String userSecondEmailId ) {
+    public void  acceptFriendRequest(String emailId, Long userSecondId,String userSecondEmailId ) {
         UserInfoEntity userInfo = userInfoRepo.findByEmailId(emailId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         UserRelationship userRelationship;
@@ -257,7 +248,6 @@ public class UserServiceImpl implements UserService {
             userRelationship.setType(Type.FRIENDS);
         }
         userRelationshipRepo.save(userRelationship);
-        return getFriendListAndMutualFriend(emailId);
     }
 
     @Override
@@ -279,42 +269,29 @@ public class UserServiceImpl implements UserService {
         return "deleted request";
     }
 
-    @Override
-    public List<UserInfoEntity> getFriendList(String emailId) {
-        UserInfoEntity user = userInfoRepo.findByEmailId(emailId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found")
-        );
-        List<UserInfoEntity> friendList = new ArrayList<>();
-        List<UserRelationship> userRelationships = userRelationshipRepo.getAllFriendOfUser(user.getId());
-        if(userRelationships.isEmpty()) {
-            throw new FriendListEmptyException("User has no friends");
-        }
-        for(UserRelationship userRelationship : userRelationships) {
-            if(Objects.equals(userRelationship.getUserFirstId().getId(), user.getId())) {
-                friendList.add(userRelationship.getUserSecondId());
-            }
-            else {
-                friendList.add(userRelationship.getUserFirstId());
-            }
-        }
-        return friendList;
-    }
 
 
 
 
     private FriendListAndMutualFriend calculateCommonFriendsCount(List<UserInfoEntity> friendsOfUser, UserInfoEntity user) {
-        int commonFriendsCount = 0;
+        Set<Long> userFriendIds = friendsOfUser.stream()
+                .map(UserInfoEntity::getId)
+                .collect(Collectors.toSet()); // Lấy danh sách ID bạn bè
+
+        // Lấy danh sách bạn bè của 'user' (người dùng đang được kiểm tra)
+        List<UserInfoEntity> userFriends = getFriendList(user.getEmailId());
         List<UserInfoEntity> mutualFriendList = new ArrayList<>();
-        for (UserInfoEntity userFriend : friendsOfUser) {
-            List<UserInfoEntity> userFriendFriends = getFriendList(userFriend.getEmailId());
-            if (userFriendFriends.contains(user)) {
-                mutualFriendList.add(userFriend);
-                commonFriendsCount++;
+
+        for (UserInfoEntity friend : userFriends) {
+            if (userFriendIds.contains(friend.getId())) { // Kiểm tra bạn chung
+                mutualFriendList.add(friend);
             }
         }
-        return new FriendListAndMutualFriend(commonFriendsCount,user,mutualFriendList);
+
+        int commonFriendsCount = mutualFriendList.size(); // Số lượng bạn chung
+        return new FriendListAndMutualFriend(commonFriendsCount, user, mutualFriendList);
     }
+
 
     private void processFriend(Vertex current, Graph graph, Queue queue, Set<String> visited,
                                List<UserInfoEntity> friendsOfUser, Map<UserInfoEntity, Integer> commonFriendsCountMap) {
@@ -358,8 +335,67 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserInfoEntity> getFriendList(String emailId) {
+        UserInfoEntity user = userInfoRepo.findByEmailId(emailId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found")
+        );
+        List<UserInfoEntity> friends = userRelationshipRepo.findFriendsByUserId(user.getId());
+        if (friends.isEmpty()) {
+            throw new FriendListEmptyException("User has no friends");
+        }
+        return friends;
+    }
+
+//    @Override
+//    public List<UserInfoEntity> getFriendList(String emailId) {
+//        UserInfoEntity user = userInfoRepo.findByEmailId(emailId).orElseThrow(
+//                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"user not found")
+//        );
+//        List<UserInfoEntity> friendList = new ArrayList<>();
+//        List<UserRelationship> userRelationships = userRelationshipRepo.getAllFriendOfUser(user.getId());
+//        if(userRelationships.isEmpty()) {
+//            throw new FriendListEmptyException("User has no friends");
+//        }
+//        for(UserRelationship userRelationship : userRelationships) {
+//            if(Objects.equals(userRelationship.getUserFirstId().getId(), user.getId())) {
+//                friendList.add(userRelationship.getUserSecondId());
+//            }
+//            else {
+//                friendList.add(userRelationship.getUserFirstId());
+//            }
+//        }
+//        return friendList;
+//    }
+
+    @Override
+    @Cacheable(value = "friends", key = "#emailId")
+    public List<FriendListAndMutualFriend> getFriendListAndMutualFriend(String emailId,String userEmail) {
+        List<UserInfoEntity> friendsOfUser = getFriendList(emailId); // Lấy danh sách bạn bè của user
+        List<UserInfoEntity> friendsOfMainUser = getFriendList(userEmail);
+        Set<Long> friendIds = friendsOfMainUser.stream()
+                .map(UserInfoEntity::getId)
+                .collect(Collectors.toSet());
+
+        List<FriendListAndMutualFriend> result = new ArrayList<>();
+
+        for (UserInfoEntity friend : friendsOfUser) {
+            List<UserInfoEntity> friendOfFriend = getFriendList(friend.getEmailId());
+
+            List<UserInfoEntity> mutualFriends = friendOfFriend.stream()
+                    .filter(f -> friendIds.contains(f.getId()))
+                    .collect(Collectors.toList());
+
+            result.add(new FriendListAndMutualFriend(mutualFriends.size(), friend, mutualFriends));
+        }
+
+        return result;
+    }
+
+
+
+    @Override
     public List<FriendListAndMutualFriend> createSocialGraph(String emailId) {
-        UserInfoEntity user = userInfoRepo.findByEmailId(emailId).orElseThrow(() -> new RuntimeException("Error:Not Found this user"));
+        UserInfoEntity user = userInfoRepo.findByEmailId(emailId).orElseThrow(() -> new UserNotFoundException("User not found"));
         Vertex start = new Vertex(user);
         Graph graph = new Graph(false, false);
         Queue queue = new Queue();
@@ -377,7 +413,4 @@ public class UserServiceImpl implements UserService {
         }
         return findMaxCommonFriendsUsers(emailId,commonFriendsCountMap);
     }
-
-
-
 }

@@ -13,6 +13,16 @@ export const SearchedUserPage = () => {
     return location.state?.query || sessionStorage.getItem("searchQuery") || "";
   });
 
+  const [results, setResults] = useState(() => location.state?.results || []);
+
+  useEffect(() => {
+    // Khi `location.state` thay đổi, cập nhật `searchQuery` và `results`
+    if (location.state) {
+      setSearchQuery(location.state.query || "");
+      setResults(location.state.results || []);
+    }
+  }, [location.state]);
+
   const [userPosts, setUserPosts] = useState([]);
 
   useEffect(() => {

@@ -14,12 +14,12 @@ public interface UserService {
     public UserEntity updateEmployee(String id , UserEntity user);
     public String  addFriend(String user,String accName);
     public List<UserInfoEntity> getAddFriendRequestList(String email);
-    public List<FriendListAndMutualFriend> acceptFriendRequest(String emailId,Long userSecondId,String userSecondEmailId);
+    public void acceptFriendRequest(String emailId,Long userSecondId,String userSecondEmailId);
     public String deleteFriendRequest(String user1Email , String user2Email);
     public List<UserInfoEntity> getFriendList(String emailId);
     public Page<SearchedUserInfoDto> getSearchResult(String email, String username, int page, int size);
     public List<FriendListAndMutualFriend> createSocialGraph(String emailId);
-    public List<FriendListAndMutualFriend> getFriendListAndMutualFriend(String emailId);
+    public List<FriendListAndMutualFriend> getFriendListAndMutualFriend(String emailId,String userEmail );
 
 
 }

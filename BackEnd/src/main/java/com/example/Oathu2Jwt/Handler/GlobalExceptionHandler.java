@@ -27,11 +27,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleFriendRequestEmpty(FriendRequestEmptyException exception) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGenericException(Exception exception) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "An unexpected error occurred"));
-    }
+
 
     @ExceptionHandler(FriendRequestAlreadySentException.class)
     public ResponseEntity<?> handleFriendRequestAlreadySent(FriendRequestAlreadySentException exception) {

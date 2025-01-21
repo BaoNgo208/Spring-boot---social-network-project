@@ -1,0 +1,68 @@
+.sidebar-container {
+  width: 300px;
+  background-color: #f9f9f9; /* Nền sáng */
+  color: #333; /* Màu chữ đen */
+  height: 100vh;
+  padding: 20px;
+  box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1); /* Giảm độ đậm của bóng */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sidebar-item {
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: #333; /* Màu chữ chính */
+}
+
+.sidebar-item:hover {
+  background-color: #e6e6e6; /* Màu hover sáng hơn */
+  color: #007bff; /* Màu chữ hover */
+}
+
+.back-button {
+  font-size: 16px;
+  color: #007bff; /* Màu xanh dương sáng */
+  margin-bottom: 20px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.sidebar-footer {
+  margin-top: 20px;
+  border-top: 1px solid #ddd; /* Đường kẻ mảnh hơn */
+  padding-top: 10px;
+}
+
+.footer-title {
+  font-size: 14px;
+  color: #666; /* Màu xám nhạt */
+  margin-bottom: 10px;
+}
+
+.shortcut-item {
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: #333; /* Màu chữ chính */
+}
+
+.shortcut-item:hover {
+  background-color: #e6e6e6; /* Nền hover sáng */
+  color: #007bff; /* Màu chữ hover */
+}

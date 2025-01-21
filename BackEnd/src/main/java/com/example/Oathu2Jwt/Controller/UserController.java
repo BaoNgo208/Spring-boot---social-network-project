@@ -58,10 +58,10 @@ public class UserController {
     }
 
     @PostMapping("/accept-friend/request/{userId}")
-    public List<FriendListAndMutualFriendDTO> acceptFriendRequest(@PathVariable("userId") String userId,Principal principal) {
+    public ResponseEntity<String > acceptFriendRequest(@PathVariable("userId") String userId,Principal principal) {
         UserInfoEntity userInfo= userService.getUserInfoById(Long.parseLong(userId));
-        return userService.acceptFriendRequest(principal.getName(), userInfo.getId(),userInfo.getEmailId())
-                .stream().map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
+       userService.acceptFriendRequest(principal.getName(), userInfo.getId(),userInfo.getEmailId());
+       return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/get/friendList")
@@ -77,10 +77,10 @@ public class UserController {
     @GetMapping("/get/friendListAndMutualFriend")
     public List<FriendListAndMutualFriendDTO> getFriendListAndMutualFriend(@RequestParam(required = false) String emailId ,Principal principal) {
         if(emailId != null) {
-            return userService.getFriendListAndMutualFriend(emailId).stream()
+            return userService.getFriendListAndMutualFriend(emailId,principal.getName()).stream()
                     .map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
         }
-        return userService.getFriendListAndMutualFriend(principal.getName()).stream()
+        return userService.getFriendListAndMutualFriend(principal.getName(), principal.getName()).stream()
                 .map(friendAndMutualFriendMapper::mapTo).collect(Collectors.toList());
     }
 

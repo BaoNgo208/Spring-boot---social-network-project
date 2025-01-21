@@ -139,7 +139,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getPostsByUserName(String username, int page, int size) {
-        List<UserInfoEntity> users = userInfoRepo.findByEmployeeUserName(username);
+        List<UserInfoEntity> users = userInfoRepo.findByEmployeeUserNameContaining(username);
         List<Long> userIds = users.stream()
                 .map(UserInfoEntity::getId)
                 .collect(Collectors.toList());
@@ -170,6 +170,11 @@ public class PostServiceImpl implements PostService {
             postIds.addAll(postPage.stream().map(Post::getId).toList());
             page++;
         } while (postPage.hasNext());
+
+        if (postIds.isEmpty()) {
+            redisTemplate.opsForList().rightPush(redisKey, "NO_POSTS");
+            return;
+        }
 
         redisTemplate.opsForList().rightPushAll(redisKey,postIds.toArray());
     }

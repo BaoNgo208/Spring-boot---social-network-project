@@ -77,9 +77,17 @@ const Navbar = () => {
           mutualFriend: 5,
         },
       ];
-      if (input.trim()) {
+
+      if (window.location.pathname === "/search-results") {
+        // Nếu đang ở trang SearchedUserPage, chỉ cập nhật state
         navigate("/search-results", {
-          state: { results: mockResults, query: input },
+          replace: true,
+          state: { results: mockResults, query: input.trim() },
+        });
+      } else {
+        // Nếu không ở trang SearchedUserPage, điều hướng như bình thường
+        navigate("/search-results", {
+          state: { results: mockResults, query: input.trim() },
         });
       }
     }
@@ -104,7 +112,6 @@ const Navbar = () => {
       console.error("Error logging out:", error);
     }
   };
-  console.log("test userInfo:", JSON.parse(sessionStorage.getItem("userInfo")));
   const handleProfile = () => {
     const queryParams = new URLSearchParams({
       email: sessionStorage.getItem("email"),

@@ -90,7 +90,7 @@ export const Profile = () => {
     },
     initialData: [],
   });
-
+  console.log("friend list:", friendList);
   if (isLoadingInfo) {
     return <div>Loading...</div>;
   }
