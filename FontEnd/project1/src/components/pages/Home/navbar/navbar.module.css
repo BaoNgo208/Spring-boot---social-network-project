@@ -75,6 +75,8 @@
   }
   .notification {
      width: 70%;
+     position: relative;
+     left: -10%;
   }
 
   
@@ -112,7 +114,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: #ff4d4d; /* Màu đỏ cho nút "Log Out" */
+    background-color: black; /* Màu đỏ cho nút "Log Out" */
     color: #fff;
     border: none;
     border-radius: 20px;
@@ -122,7 +124,7 @@
   }
   
   .logoutButton:hover {
-    background-color: #d43d3d; /* Màu khi di chuột */
+    background-color: #333;
   }
   
   .logoutButtonIcon {

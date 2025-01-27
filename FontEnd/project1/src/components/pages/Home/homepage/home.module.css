@@ -1,4 +1,4 @@
-.container{
+.container {
     width: 98%;
     margin: 0 auto;
     margin-top: 40px;
@@ -6,12 +6,15 @@
     grid-template-columns: 3fr 6fr 1.5fr;
     gap: 50px;
 }
+
 .right {
     font-size: 14px;
 }
+
 .content {
-     display: none;
+    display: block; /* Hiển thị nội dung theo mặc định */
 }
+
 .chatSection {
     position: sticky;
     bottom: 0;
@@ -19,18 +22,103 @@
     z-index: 1050;
     width: 50%;
 }
+
 .left {
     position: sticky;
-    top: 10%; /* Đặt khoảng cách cố định từ đỉnh trang */
+    top: 60px; /* Đặt khoảng cách cố định từ đỉnh trang */
     height: fit-content; /* Đảm bảo nội dung không bị kéo dài */
     z-index: 1000; /* Ưu tiên hiển thị cao hơn */
+    width: 100%;
 }
-
 
 .rightside {
     position: fixed;
-    top: 10%; /* Đặt khoảng cách từ đầu trang */
-    right: -2%; /* Đặt nó ở phía bên phải */
-    width: 18%; /* Hoặc bạn có thể tùy chỉnh theo kích thước mong muốn */
-    z-index: 1000;
-  }
+    top: 60px; /* Đặt khoảng cách từ đầu trang */
+    right: 7px; /* Đặt nó ở phía bên phải */
+    width: 15%; /* Hoặc bạn có thể tùy chỉnh theo kích thước mong muốn */
+    z-index: 10;
+    height: 100%;
+  background-color: #f9f9f9; /* Nền sáng */
+  box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1); /* Giảm độ đậm của bóng */
+  padding:20px ;
+}
+
+/* Media queries for responsiveness */
+@media screen and (max-width: 1200px) {
+    .container {
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+    }
+    .rightside {
+        width: 25%;
+        right: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .rightside {
+        position: static;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .chatSection {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    .rightside {
+        display: none; /* Ẩn phần này nếu không cần thiết trên màn hình nhỏ */
+    }
+
+    .left {
+        display: none; /* Tùy chọn: Ẩn sidebar bên trái để tăng không gian */
+    }
+
+    .chatSection {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        left: 0;
+    }
+
+    .content {
+        padding: 10px;
+    }
+}
+/* Media query cho màn hình nhỏ hơn 576px */
+@media screen and (max-width: 576px) {
+    .home_container {
+        display: block; /* Thay đổi bố cục thành cột */
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    .home_left,
+    .home_rightside {
+        display: none; /* Ẩn sidebar bên trái và phải để tiết kiệm không gian */
+    }
+
+    .content {
+        width: 100%;
+        margin: 0;
+        padding: 10px; /* Thêm khoảng cách bên trong */
+    }
+
+    .home_chatSection {
+        width: 100%; /* Đặt chiều rộng 100% cho phần chat */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+}

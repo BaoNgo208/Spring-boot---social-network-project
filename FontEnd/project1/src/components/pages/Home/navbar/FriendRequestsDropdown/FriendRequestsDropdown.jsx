@@ -5,6 +5,8 @@ import profileUserImg from "../../../../../assests/woman.jpg";
 import { AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { useQuery } from "@tanstack/react-query";
 import classes from "./FriendRequestsDropdown.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserFriends } from "@fortawesome/free-solid-svg-icons";
 
 const FriendRequestsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,7 +74,7 @@ const FriendRequestsDropdown = () => {
   return (
     <div className={classes.dropdown}>
       <button onClick={toggleDropdown} className={classes.dropdownToggle}>
-        Friend Requests
+        <FontAwesomeIcon icon={faUserFriends} />
       </button>
       {isOpen && (
         <div className={classes.dropdownMenu}>

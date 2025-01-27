@@ -3,15 +3,26 @@ import classes from "./navbar.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineSearch, AiOutlineLogout } from "react-icons/ai";
 import api from "../../../../helpers/api";
+import ChatDropdown from "./ChatDropdown/ChatDropdown";
 import axios from "axios";
 import { SearchResultsList } from "./SearchResultsList";
 import FriendRequestsDropdown from "./FriendRequestsDropdown/FriendRequestsDropdown";
 import Notification from "./Notification/Notification";
+import {
+  faUser,
+  faSignOutAlt,
+  faMessage,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
   const fetchResults = async (value) => {
     if (!value || value.trim() === "") {
@@ -142,14 +153,18 @@ const Navbar = () => {
         </div>
         <div className={classes.right}>
           <FriendRequestsDropdown className={classes.friendrequests} />
+
           <Notification className={classes.notification} />
+          <ChatDropdown
+            isOpen={isDropdownOpen}
+            toggleDropdown={toggleDropdown}
+          />
           <button className={classes.logoutButton} onClick={handleProfile}>
-            <AiOutlineLogout className={classes.logoutButtonIcon} />
-            Profile
+            <FontAwesomeIcon icon={faUser} />
           </button>
+
           <button className={classes.logoutButton} onClick={handleLogout}>
-            <AiOutlineLogout className={classes.logoutButtonIcon} />
-            Log Out
+            <FontAwesomeIcon icon={faSignOutAlt} />
           </button>
         </div>
       </div>

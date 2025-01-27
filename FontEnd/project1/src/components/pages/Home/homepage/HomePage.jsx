@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Rightside from "../rightside/Rightside";
-import SuggestedUsers from "../suggestedUsers/SuggestedUsers";
 import Post from "../post/Post";
 import classes from "./home.module.css";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +14,7 @@ import {
 } from "../../../../helpers/WebSocketService";
 import { usePostContext } from "../post/PostDetail/PostContext";
 import { useRef } from "react";
+import { useFriendContext } from "../../../../helpers/context/FriendContext";
 
 const FetchRecommendUser = async () => {
   const response = await api.get(
@@ -32,6 +32,8 @@ export const Home = () => {
   const chatContainerRef = useRef(null);
   const [messagePage, setMessagePage] = useState(0);
   const [recommendUsers, setRecommendUsers] = useState();
+  const { friends, setFriends, contextAllMessages, setContextAllMessages } =
+    useFriendContext();
 
   useEffect(() => {
     registerMessageCallback((messageObject) => {
@@ -40,6 +42,8 @@ export const Home = () => {
         ...prevMessages,
         messageObject.message,
       ]);
+      console.log("all message", allMessages);
+      setContextAllMessages(allMessages);
     });
   }, []);
 
@@ -57,6 +61,7 @@ export const Home = () => {
         if (response.status === 404) {
           throw new Error("No content available.");
         }
+        setFriends(response.data);
         return response.data;
       } catch (error) {
         console.error("Error fetching friend list:", error);
@@ -64,6 +69,10 @@ export const Home = () => {
       }
     },
   });
+
+  // useEffect(() => {
+  //   console.log("Updated context data:", friends);
+  // }, [friends]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,7 +85,7 @@ export const Home = () => {
     };
 
     fetchData();
-  }, []); // Chạy 1 lần khi homepage load
+  }, []);
 
   const {
     data,
@@ -157,12 +166,6 @@ export const Home = () => {
     setSelectedFriendState(null);
     setSelectedFriend(null);
   };
-
-  // useEffect(() => {
-  //   if (isErrorInfo || isErrorPosts) {
-  //     window.location.href = "/";
-  //   }
-  // }, [isLoadingInfo, isLoadingPosts, isErrorInfo, isErrorPosts]);
 
   const handleScroll = useCallback(() => {
     if (
@@ -285,13 +288,6 @@ export const Home = () => {
           </div>
         </div>
         {renderFriendList()}
-        {/* <div className={classes.rightside}>
-          <Rightside
-            friends={info.length > 0 ? info : []}
-            onFriendClick={handleFriendClick}
-            unreadMessages={unreadMessages}
-          />
-        </div> */}
       </div>
     </div>
   );

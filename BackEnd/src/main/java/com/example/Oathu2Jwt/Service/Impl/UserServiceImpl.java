@@ -7,7 +7,9 @@ import com.example.Oathu2Jwt.Model.Entity.*;
 import com.example.Oathu2Jwt.Model.Entity.User.UserEntity;
 import com.example.Oathu2Jwt.Model.Entity.User.UserInfoEntity;
 import com.example.Oathu2Jwt.Model.Entity.User.UserRelationship;
+import com.example.Oathu2Jwt.Model.MongoDBEntity.Chat.Chat;
 import com.example.Oathu2Jwt.Repository.*;
+import com.example.Oathu2Jwt.Repository.MongoDBRepo.ChatRepo;
 import com.example.Oathu2Jwt.Service.UserService;
 import com.example.Oathu2Jwt.Util.Graph.Graph;
 import com.example.Oathu2Jwt.Util.Graph.Vertex;
@@ -15,6 +17,8 @@ import com.example.Oathu2Jwt.Util.Mapper.Mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import com.mongodb.DuplicateKeyException;
+import com.mongodb.MongoException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -43,17 +47,19 @@ public class UserServiceImpl implements UserService {
     private final RedisTemplate<String,Object> redisTemplate;
     private final UserRelationshipRepo userRelationshipRepo;
     private final Mapper<UserEntity, UserDTO> userDTOMapper;
+    private final ChatRepo chatRepo;
 
     public UserServiceImpl(UserRepo userRepo, SalaryRepo salaryRepo, UserInfoRepo userInfoRepo,
                            UserRelationshipRepo userRelationshipRepo,
                            @Qualifier("jdkRedisTemplate") RedisTemplate<String, Object> redisTemplate,
-                           Mapper<UserEntity,UserDTO> userDTOMapper) {
+                           Mapper<UserEntity,UserDTO> userDTOMapper,ChatRepo chatRepo) {
         this.userRepo = userRepo;
         this.salaryRepo = salaryRepo;
         this.userInfoRepo = userInfoRepo;
         this.userRelationshipRepo = userRelationshipRepo;
         this.redisTemplate = redisTemplate;
         this.userDTOMapper = userDTOMapper;
+        this.chatRepo = chatRepo;
     }
 
 
@@ -146,7 +152,6 @@ public class UserServiceImpl implements UserService {
 
     }
 
-
     public List<FriendListAndMutualFriend> readFromRedis(String key) {
         Object redisValue = redisTemplate.opsForValue().get(key);
 
@@ -166,16 +171,11 @@ public class UserServiceImpl implements UserService {
     public Page<SearchedUserInfoDto> getSearchResult(String email, String username, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<UserInfoEntity> result = userInfoRepo.findByEmployeeUserNameContaining(username, pageable);
-
         if (result.isEmpty()) {
-            System.out.println("is empty????");
             throw new UserNotFoundException("Username not found");
         }
-
         String redisKey = "friends::" + email;
-
         Object redisValue = redisTemplate.opsForValue().get(redisKey);
-
 
         List<FriendListAndMutualFriend> redisList = new ArrayList<>();
         if (redisValue != null) {
@@ -200,7 +200,6 @@ public class UserServiceImpl implements UserService {
 
                     boolean existsInRedis = friendData != null;
                     int mutualFriendCount = friendData != null ? friendData.getMutualFriend() : calculateCommonFriendsCount(getFriendList(email),user).getMutualFriend();
-                    System.out.println("mutual friend count:" + mutualFriendCount);
 
                     return new SearchedUserInfoDto(
                             user.getEmailId(),
@@ -230,24 +229,42 @@ public class UserServiceImpl implements UserService {
                     @CachePut(value = "friends", key = "#emailId"),
                     @CachePut(value = "friends", key = "#userSecondEmailId")
             })
-    public void  acceptFriendRequest(String emailId, Long userSecondId,String userSecondEmailId ) {
-        UserInfoEntity userInfo = userInfoRepo.findByEmailId(emailId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-        UserRelationship userRelationship;
-        System.out.println("first:" + userInfo.getId());
-        System.out.println("second:" + userSecondId);
-        if(userInfo.getId() > userSecondId) {
-             userRelationship = userRelationshipRepo.findByUserFirstId_IdAndUserSecondId_Id(userSecondId,userInfo.getId());
-             userRelationship.setType(Type.FRIENDS);
-        }
-        else {
-            userRelationship = userRelationshipRepo.findByUserFirstId_IdAndUserSecondId_Id(userInfo.getId(),userSecondId);
-            if(userRelationship.getType() == Type.FRIENDS) {
-                throw new AlreadyAcceptedFriendRequestException("ALREADY ACCEPTED");
+    public void acceptFriendRequest(String emailId, Long userSecondId, String userSecondEmailId) {
+        try {
+
+
+            UserInfoEntity userInfo = userInfoRepo.findByEmailId(emailId)
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+            UserRelationship userRelationship;
+
+            Chat chat = Chat.builder()
+                    .participants(List.of(userInfo.getId().intValue(),userSecondId.intValue()))
+                    .build();
+            chatRepo.save(chat);
+
+            if (userInfo.getId() > userSecondId) {
+                userRelationship = userRelationshipRepo.findByUserFirstId_IdAndUserSecondId_Id(userSecondId, userInfo.getId());
+                userRelationship.setType(Type.FRIENDS);
+            } else {
+                userRelationship = userRelationshipRepo.findByUserFirstId_IdAndUserSecondId_Id(userInfo.getId(), userSecondId);
+                if (userRelationship.getType() == Type.FRIENDS) {
+                    throw new AlreadyAcceptedFriendRequestException("ALREADY ACCEPTED");
+                }
+                userRelationship.setType(Type.FRIENDS);
             }
-            userRelationship.setType(Type.FRIENDS);
+
+            userRelationshipRepo.save(userRelationship);
+
+        }catch (UserNotFoundException | AlreadyAcceptedFriendRequestException e) {
+            throw e;
+        } catch (DuplicateKeyException e) {
+            throw new RuntimeException("Duplicate key error while saving chat", e);
+        } catch (MongoException e) {
+            throw new RuntimeException("MongoDB error occurred while saving the chat", e);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while accepting the friend request", e);
         }
-        userRelationshipRepo.save(userRelationship);
     }
 
     @Override

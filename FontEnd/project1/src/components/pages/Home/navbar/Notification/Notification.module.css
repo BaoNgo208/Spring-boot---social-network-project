@@ -1,98 +1,105 @@
 /* FriendRequestsDropdown.module.css */
 .dropdown {
-    position: relative;
-    z-index: 12;
-    display: inline-block;
-  }
-  .dropdownItem {
-    display: flex;
-  }
-  .dropdownToggle {
-    background-color: #fff;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  .notificationDot {
-    width: 10px;
-    height: 10px;
-    background-color: red;
-    border-radius: 50%;
-    display: inline-block;
-    margin-left: 5px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+  position: relative;
+  z-index: 12;
+  display: inline-block;
 }
 
 .dropdownToggle {
-    position: relative;
-    background-color: #fff;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-}
-  .dropdownMenu {
-    display: block;
-    position: absolute;
-    width: 400px;
-    background-color: #f9f9f9;
-    min-width: 250px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  .container {
+
     display: flex;
     align-items: center;
-    padding: 10px;
-    width: 100%;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .profileUserImg {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: black; /* Màu đỏ cho nút "Log Out" */
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 
   
-  .buttons {
-    display: flex;
-    align-items: center;
-  }
-  
-  .acceptButton, .declineButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-left: 5px;
-  }
-  
-  .acceptIcon {
-    color: green;
-    font-size: 20px;
-  }
-  
-  .declineIcon {
-    color: red;
-    font-size: 20px;
-  }
-  
-  .dropdownItem {
-    padding: 10px;
-    width: 100%; /* Thêm dòng này */
-  }
-  
-  .dropdownItem:hover {
-    background-color: #f1f1f1;
-  }
-  
+
+}
+
+.notificationDot {
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.dropdownMenu {
+  display: block;
+  position: absolute;
+  left: 0; /* Căn chỉnh menu về bên trái */
+  transform: translateX(-70%); /* Tùy chỉnh để canh chính xác */
+  width: 400px;
+  background-color: #f9f9f9;
+  min-width: 250px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+}
+
+.profileUserImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+}
+
+.acceptButton,
+.declineButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.acceptIcon {
+  color: green;
+  font-size: 20px;
+}
+
+.declineIcon {
+  color: red;
+  font-size: 20px;
+}
+
+.dropdownItem {
+  display: flex;
+  padding: 10px;
+  width: 100%;
+}
+
+.dropdownItem:hover {
+  background-color: #f1f1f1;
+}
+
+.noNotifications {
+  padding: 10px;
+  text-align: center;
+  color: #777;
+}

@@ -14,6 +14,8 @@ import { PostProvider } from './components/pages/Home/post/PostDetail/PostContex
 import { NotificationProvider } from './components/pages/Home/navbar/Notification/NotificationContext';
 import Layout from './components/pages/Home/navbar/Layout';
 import { SearchedUserPage } from './components/pages/SearchedUserPage/SearchedUserPage';
+import { RecommendUsersProvider } from './helpers/context/RecommendUsersContext';
+import { FriendProvider } from './helpers/context/FriendContext';
 const App = () => {
     useEffect(() => {
         const token = sessionStorage.getItem("accessToken");
@@ -31,6 +33,9 @@ const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
             <NotificationProvider>
+                <RecommendUsersProvider>
+                <FriendProvider>
+
                 <PostProvider>
                     <Router>
                         <AuthWrapper />
@@ -39,13 +44,16 @@ const App = () => {
                             <Route path="/signup" element={<SignUpPage />} />
                             <Route element={<ProtectedRoutes />}>
                                 <Route path="/home" element={<Layout><Home /></Layout>} />
-                                <Route path="/profile" element={<Layout><ProfileWrapper /></Layout>} /> {/* Sử dụng ProfileWrapper */}
-                                <Route path="/postDetail/:id" element={<PostDetailPage />} />
+                                <Route path="/profile" element={<Layout><ProfileWrapper /></Layout>} /> 
+                                <Route path="/postDetail/:id" element={<Layout><PostDetailPage /></Layout> } />
                                 <Route path='/search-results' element = {<Layout><SearchedUserPage/></Layout> } />
                             </Route>
                         </Routes>
                     </Router>
                 </PostProvider>
+                </FriendProvider>
+                
+                </RecommendUsersProvider>
             </NotificationProvider>
         </QueryClientProvider>
     );

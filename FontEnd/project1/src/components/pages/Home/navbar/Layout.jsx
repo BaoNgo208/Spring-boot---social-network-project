@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "./navbar";
+import Rightside from "../rightside/Rightside";
 
 const Layout = ({ children }) => {
   return (
@@ -17,6 +18,7 @@ const Layout = ({ children }) => {
       >
         <Navbar />
       </div>
+
       <div style={{ marginTop: "60px" }}>{children}</div>
     </div>
   );

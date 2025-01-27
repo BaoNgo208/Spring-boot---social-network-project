@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import classes from "./Notification.module.css";
 import profileUserImg from "../../../../../assests/woman.jpg";
 import { useNotifications } from "./NotificationContext";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Notification = () => {
   const {
@@ -15,7 +17,25 @@ const Notification = () => {
   } = useNotifications();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [updatedNotifications, setUpdatedNotifications] = useState([]);
   const navigate = useNavigate();
+
+  const calculateTimeElapsed = (createdAt) => {
+    const now = Date.now();
+    const diff = now - createdAt; // Thời gian đã trôi qua (ms)
+
+    const minutes = Math.floor(diff / (1000 * 60));
+    if (minutes < 60) return `${minutes} phút trước`;
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    if (hours < 24) return `${hours} giờ trước`;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (days < 365) return `${days} ngày trước`;
+
+    const years = Math.floor(days / 365);
+    return `${years} năm trước`;
+  };
 
   const toggleDropdown = () => {
     if (!isOpen) {
@@ -27,10 +47,15 @@ const Notification = () => {
   };
 
   useEffect(() => {
-    if (isOpen && notifications.length === 0) {
-      fetchNotifications(); // Fetch notifications when dropdown is opened and list is empty
+    if (isOpen && notifications.length > 0) {
+      // Cập nhật thời gian cho thông báo khi menu được mở
+      const updated = notifications.map((notification) => ({
+        ...notification,
+        timeElapsed: calculateTimeElapsed(notification.createdAt),
+      }));
+      setUpdatedNotifications(updated);
     }
-  }, [isOpen, notifications.length, fetchNotifications]);
+  }, [isOpen, notifications]);
 
   const handleNotificationClicked = (postId) => {
     navigate(`/postDetail/${postId}`); // Navigate to the post detail page
@@ -58,15 +83,15 @@ const Notification = () => {
   return (
     <div className={classes.dropdown}>
       <button onClick={toggleDropdown} className={classes.dropdownToggle}>
-        Notifications
+        <FontAwesomeIcon icon={faBell} />
         {hasNewNotification && (
           <span className={classes.notificationDot}></span>
         )}
       </button>
       {isOpen && (
         <div className={classes.dropdownMenu} onScroll={handleScroll}>
-          {notifications.length > 0 ? (
-            notifications.map((notification, index) => (
+          {updatedNotifications.length > 0 ? (
+            updatedNotifications.map((notification, index) => (
               <div
                 className={classes.container}
                 key={index}
@@ -84,6 +109,10 @@ const Notification = () => {
                     <div className={classes.buttons}>
                       {getNotificationMessage(notification)}
                     </div>
+                    <div className={classes.timeElapsed}>
+                      <br></br>
+                      {notification.timeElapsed}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -91,8 +120,7 @@ const Notification = () => {
           ) : (
             <div className={classes.noNotifications}>No notifications</div>
           )}
-          {isLoading && <div>Loading...</div>}{" "}
-          {/* Display while fetching more */}
+          {isLoading && <div>Loading...</div>}
         </div>
       )}
     </div>

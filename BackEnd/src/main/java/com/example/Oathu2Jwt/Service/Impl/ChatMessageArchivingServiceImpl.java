@@ -1,11 +1,15 @@
 package com.example.Oathu2Jwt.Service.Impl;
 
 import com.example.Oathu2Jwt.Exception.RedisOperationException;
+import com.example.Oathu2Jwt.Exception.UserNotFoundException;
+import com.example.Oathu2Jwt.Model.MongoDBEntity.Chat.Chat;
 import com.example.Oathu2Jwt.Model.MongoDBEntity.Message.ArchivedChatMessages;
 import com.example.Oathu2Jwt.Model.MongoDBEntity.Message.ChatMessage;
 import com.example.Oathu2Jwt.Repository.MongoDBRepo.ArchivedChatMessagesRepo;
 import com.example.Oathu2Jwt.Repository.MongoDBRepo.ChatMessageRepo;
+import com.example.Oathu2Jwt.Repository.MongoDBRepo.ChatRepo;
 import com.example.Oathu2Jwt.Service.ChatMessageArchivingService;
+import com.mongodb.MongoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.redis.RedisConnectionFailureException;
@@ -25,6 +29,7 @@ public class ChatMessageArchivingServiceImpl implements ChatMessageArchivingServ
     private final ChatMessageRepo chatMessageRepo;
     private final ArchivedChatMessagesRepo archivedChatMessagesRepo;
     private final RedisTemplate<String,Object> redisTemplate;
+    private final ChatRepo chatRepo;
 
 
     @Override
@@ -116,7 +121,6 @@ public class ChatMessageArchivingServiceImpl implements ChatMessageArchivingServ
 
             int start = (int) pageable.getOffset();
             int end = Math.min((start + pageable.getPageSize()), sortedMessages.size());
-
             if (start > sortedMessages.size()) {
                 return new PageImpl<>(new ArrayList<>(), pageable, sortedMessages.size());
             }
@@ -136,14 +140,24 @@ public class ChatMessageArchivingServiceImpl implements ChatMessageArchivingServ
 
     @Override
     public void saveMessageToMongodbAndRedis(ChatMessage chatMessage) {
-        chatMessageRepo.save(chatMessage);
         try {
+            chatMessageRepo.save(chatMessage);
+            Chat chat = chatRepo.
+                    findByParticipantsContainingIgnoreOrder(
+                            List.of(chatMessage.getReceiverId(),chatMessage.getSenderId()
+                            )).orElseThrow(() -> new UserNotFoundException("123"));
+
+            chat.setLastMessage(chatMessage);
+            chatRepo.save(chat);
             String redisKey = chatMessage.getSenderId().toString() + ":" + chatMessage.getReceiverId().toString();
             redisTemplate.opsForHash().put(redisKey, chatMessage.getId(), chatMessage);
             redisTemplate.expire(redisKey, Duration.ofDays(7));
-        } catch (Exception exception) {
+        }
+        catch(MongoException e) {
+            throw e;
+        }
+        catch (Exception exception) {
             throw new RedisOperationException("Failed to save to Redis");
         }
-
     }
 }

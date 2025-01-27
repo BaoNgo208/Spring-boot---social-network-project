@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { SearchedUser } from "./SearchedUser";
 import { useLocation } from "react-router-dom";
 import "./SearchedUserPage.css";
-import LeftSide from "./LeftSide/LeftSide";
 import Post from "../Home/post/Post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import api from "../../../helpers/api";
-
+import Sidebar from "../Home/SideBar/Sidebar";
+import { useRecommendUsers } from "../../../helpers/context/RecommendUsersContext";
 export const SearchedUserPage = () => {
+  const recommendUsers = useRecommendUsers();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState(() => {
     return location.state?.query || sessionStorage.getItem("searchQuery") || "";
@@ -16,7 +17,6 @@ export const SearchedUserPage = () => {
   const [results, setResults] = useState(() => location.state?.results || []);
 
   useEffect(() => {
-    // Khi `location.state` thay đổi, cập nhật `searchQuery` và `results`
     if (location.state) {
       setSearchQuery(location.state.query || "");
       setResults(location.state.results || []);
@@ -126,7 +126,7 @@ export const SearchedUserPage = () => {
   return (
     <div className="main-container">
       <div className="right-nav-bar">
-        <LeftSide />
+        <Sidebar recommendUsers={recommendUsers} />
       </div>
 
       <div className="main-content">

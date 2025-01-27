@@ -1,0 +1,15 @@
+.main-container {
+    width: 100%;
+}
+.left-bar {
+    width: 25%;
+    margin-right:40px ;
+}
+.post {
+    padding: 0px;
+    width: 47%;
+    border: none;
+}
+.post > * {
+    width: 100%;
+}
