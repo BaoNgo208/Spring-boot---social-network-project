@@ -64,7 +64,6 @@ public class ChatMessageArchivingServiceImpl implements ChatMessageArchivingServ
     @Override
     public Page<ChatMessage> getMessagesBetweenUsers(String userId1, String userId2, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-
         try {
             String redisKey1 = userId1 + ":" + userId2;
             String redisKey2 = userId2 + ":" + userId1;
@@ -124,7 +123,6 @@ public class ChatMessageArchivingServiceImpl implements ChatMessageArchivingServ
             if (start > sortedMessages.size()) {
                 return new PageImpl<>(new ArrayList<>(), pageable, sortedMessages.size());
             }
-
             List<ChatMessage> pagedMessages = sortedMessages.subList(start, end);
             return new PageImpl<>(pagedMessages, pageable, sortedMessages.size());
 

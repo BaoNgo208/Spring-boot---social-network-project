@@ -6,7 +6,7 @@ let messageCallback = null;
 let selectedFriendId = null;
 let notificationCallback = null;
 let unreadMessages = {}; 
-
+let setSelectedFriendCallback = null;
 export const connectWebSocket = () => {
   const socket = new SockJS('http://localhost:8080/ws');
   stompClient = over(socket);
@@ -99,6 +99,14 @@ export const setSelectedFriend = (friendId) => {
   if (friendId !== null && unreadMessages[friendId] !== undefined) {
     unreadMessages[friendId] = 0; 
   }
+  if (setSelectedFriendCallback) {
+    setSelectedFriendCallback(friendId);
+  }
+};
+
+
+export const setSelectedFriendListener = (callback) => {
+  setSelectedFriendCallback = callback;
 };
 
 export const disconnectWebSocket = () => {

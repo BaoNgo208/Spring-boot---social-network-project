@@ -131,7 +131,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getPostOfUser(String emailId,int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "postTime"));
         return postRepo.findByUserId(userInfoRepo.findByEmailId(emailId)
                 .orElseThrow(() -> new RuntimeException("Error:Not Found this user"))
                 .getId(),pageable);

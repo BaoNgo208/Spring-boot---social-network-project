@@ -49,6 +49,7 @@ export const Profile = () => {
         ? `http://localhost:8080/post/get/profile?emailId=${emailId}&page=${pageParam}&size=4`
         : `http://localhost:8080/post/get/profile?page=${pageParam}&size=4`;
       const response = await api.get(url);
+      console.log("user posts:", response.data);
       return response.data;
     },
     getNextPageParam: (lastPage, allPages) => {
@@ -90,7 +91,6 @@ export const Profile = () => {
     },
     initialData: [],
   });
-  console.log("friend list:", friendList);
   if (isLoadingInfo) {
     return <div>Loading...</div>;
   }

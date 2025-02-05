@@ -8,14 +8,12 @@ import PostSection from "../posting/posting";
 import Chat from "../Chat/Chat";
 import Sidebar from "../SideBar/Sidebar";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import {
-  registerMessageCallback,
-  setSelectedFriend,
-} from "../../../../helpers/WebSocketService";
+import { registerMessageCallback } from "../../../../helpers/WebSocketService";
 import { usePostContext } from "../post/PostDetail/PostContext";
 import { useRef } from "react";
 import { useFriendContext } from "../../../../helpers/context/FriendContext";
-
+import { useChat } from "../../../../helpers/context/ChatContext";
+import { useSelectedFriendMessagesContext } from "../../../../helpers/context/SelectedFriendMessagesContext";
 const FetchRecommendUser = async () => {
   const response = await api.get(
     "http://localhost:8080/employee/get/getRecommendedFriend"
@@ -25,7 +23,8 @@ const FetchRecommendUser = async () => {
 export const Home = () => {
   const [unreadMessages, setUnreadMessages] = useState({});
   const [allMessages, setAllMessages] = useState([]);
-  const [selectedFriend, setSelectedFriendState] = useState(null);
+  // const [selectedFriend, setSelectedFriendState] = useState(null);
+  const { selectedFriend, setSelectedFriend } = useChat();
   const [newFeeds, setNewFeeds] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const { setPosts } = usePostContext();
@@ -34,6 +33,7 @@ export const Home = () => {
   const [recommendUsers, setRecommendUsers] = useState();
   const { friends, setFriends, contextAllMessages, setContextAllMessages } =
     useFriendContext();
+  const { messages, setMessages } = useSelectedFriendMessagesContext();
 
   useEffect(() => {
     registerMessageCallback((messageObject) => {
@@ -99,7 +99,7 @@ export const Home = () => {
     queryFn: async ({ pageParam = 0 }) => {
       try {
         const response = await api.get(
-          `http://localhost:8080/post/get/recommend/post?page=${pageParam}&size=10`
+          `http://localhost:8080/post/get/recommend/post?page=${pageParam}&size=4`
         );
         return response.data;
       } catch (error) {
@@ -115,11 +115,11 @@ export const Home = () => {
 
   useEffect(() => {
     if (data) {
-      const posts = data.pages.flat();
-      setNewFeeds(posts);
-      setPosts(posts);
+      const fetchedPosts = data.pages.flatMap((page) => page.content || []);
+      setPosts(fetchedPosts);
+      setNewFeeds(fetchedPosts);
     }
-  }, [data, setPosts]);
+  }, [data]);
 
   const handlePost = (newPost) => {
     setNewFeeds((prevFeeds) => {
@@ -141,14 +141,15 @@ export const Home = () => {
     if (messages && messages.length > 0) {
       return messages;
     } else {
-      setHasMore(false); // Dừng fetch nếu không còn tin nhắn nào
-      return []; // Trả về mảng rỗng nếu không tìm thấy tin nhắn nào
+      setHasMore(false);
+      return [];
     }
   };
 
   const handleFriendClick = async (friend) => {
-    setSelectedFriendState(friend);
-    setSelectedFriend(friend.id);
+    // setSelectedFriendState(friend);
+
+    setSelectedFriend(friend);
 
     const latestMessages = await loadMessages(friend, 0);
     setAllMessages(latestMessages);
@@ -163,7 +164,7 @@ export const Home = () => {
   };
 
   const handleCloseChat = () => {
-    setSelectedFriendState(null);
+    // setSelectedFriendState(null);
     setSelectedFriend(null);
   };
 
@@ -226,6 +227,22 @@ export const Home = () => {
   const sortedMessages = allMessages.sort(
     (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
   );
+  useEffect(() => {
+    if (selectedFriend) {
+      const selectedFriendMessages = sortedMessages.filter(
+        (msg) =>
+          (msg.senderId === parseInt(selectedFriend.id) &&
+            msg.receiverId === parseInt(sessionStorage.getItem("userId"))) ||
+          (msg.senderId === parseInt(sessionStorage.getItem("userId")) &&
+            msg.receiverId === parseInt(selectedFriend.id))
+      );
+
+      setMessages(selectedFriendMessages);
+      console.log("mess:", messages);
+    } else {
+      setMessages([]); // Nếu không có bạn bè nào được chọn, làm rỗng danh sách tin nhắn
+    }
+  }, [selectedFriend, sortedMessages]); // useEffect sẽ chạy lại mỗi khi `selectedFriend` hoặc `sortedMessages` thay đổi
 
   if (isLoadingInfo || isLoadingPosts) return <div>Loading...</div>;
   const renderPosts = () => {
@@ -251,14 +268,6 @@ export const Home = () => {
     );
   };
 
-  const selectedFriendMessages = sortedMessages.filter(
-    (msg) =>
-      (msg.senderId === parseInt(selectedFriend?.id) &&
-        msg.receiverId === parseInt(sessionStorage.getItem("userId"))) ||
-      (msg.senderId === parseInt(sessionStorage.getItem("userId")) &&
-        msg.receiverId === parseInt(selectedFriend?.id))
-  );
-
   return (
     <div>
       <div className={classes.container}>
@@ -280,7 +289,7 @@ export const Home = () => {
                 userId={sessionStorage.getItem("userId")}
                 friend={selectedFriend}
                 onClose={handleCloseChat}
-                messages={selectedFriendMessages}
+                messages={messages}
                 className={classes.chat}
                 chatContainerRef={chatContainerRef}
               />

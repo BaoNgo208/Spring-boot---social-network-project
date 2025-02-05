@@ -10,7 +10,8 @@ const PostDetailPage = () => {
   const recommendUsers = useRecommendUsers();
   const { posts } = usePostContext();
   const { id } = useParams();
-  const post = posts[0].content.find((post) => post.id === parseInt(id, 10));
+  // console.log("post detail posts:", posts[0]);
+  const post = posts.find((post) => post.id === parseInt(id, 10));
 
   const newPostList = [
     {

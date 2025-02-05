@@ -29,6 +29,10 @@ public class UserInfoConfig implements UserDetails {
         return userInfoEntity.getEmailId();
     }
 
+    public String getUsername2() {
+        return userInfoEntity.getEmployee().getUserName();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

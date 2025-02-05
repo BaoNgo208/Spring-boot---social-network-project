@@ -14,12 +14,14 @@ import {
   faMessage,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useFriendContext } from "../../../../helpers/context/FriendContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { friends } = useFriendContext();
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -90,13 +92,11 @@ const Navbar = () => {
       ];
 
       if (window.location.pathname === "/search-results") {
-        // Nếu đang ở trang SearchedUserPage, chỉ cập nhật state
         navigate("/search-results", {
           replace: true,
           state: { results: mockResults, query: input.trim() },
         });
       } else {
-        // Nếu không ở trang SearchedUserPage, điều hướng như bình thường
         navigate("/search-results", {
           state: { results: mockResults, query: input.trim() },
         });
@@ -156,6 +156,7 @@ const Navbar = () => {
 
           <Notification className={classes.notification} />
           <ChatDropdown
+            friends={friends}
             isOpen={isDropdownOpen}
             toggleDropdown={toggleDropdown}
           />

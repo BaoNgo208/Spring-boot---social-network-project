@@ -14,7 +14,7 @@ const Chat = ({ userId, friend, onClose, messages, chatContainerRef }) => {
   const [messagePage, setMessagePage] = useState(0);
   const receiverId = friend.id;
   const fileInputRef = useRef(null);
-
+  // console.log("messages:", messages);
   const handleFileSelect = (event) => {
     const files = event.target.files;
     if (files.length > 0) {

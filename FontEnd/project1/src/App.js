@@ -16,6 +16,8 @@ import Layout from './components/pages/Home/navbar/Layout';
 import { SearchedUserPage } from './components/pages/SearchedUserPage/SearchedUserPage';
 import { RecommendUsersProvider } from './helpers/context/RecommendUsersContext';
 import { FriendProvider } from './helpers/context/FriendContext';
+import { ChatProvider } from './helpers/context/ChatContext';
+import { SelectedFriendMessagesProvider } from './helpers/context/SelectedFriendMessagesContext';
 const App = () => {
     useEffect(() => {
         const token = sessionStorage.getItem("accessToken");
@@ -35,8 +37,10 @@ const App = () => {
             <NotificationProvider>
                 <RecommendUsersProvider>
                 <FriendProvider>
-
                 <PostProvider>
+                <ChatProvider>
+                <SelectedFriendMessagesProvider>
+
                     <Router>
                         <AuthWrapper />
                         <Routes>
@@ -50,6 +54,9 @@ const App = () => {
                             </Route>
                         </Routes>
                     </Router>
+                
+                </SelectedFriendMessagesProvider>
+                </ChatProvider>    
                 </PostProvider>
                 </FriendProvider>
                 

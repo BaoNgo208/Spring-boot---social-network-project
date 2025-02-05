@@ -10,34 +10,33 @@ const Post = ({ posts: propPosts = [], className }) => {
 
   useEffect(() => {
     if (propPosts.length > 0) {
-      const newPosts = propPosts
-        .flatMap((page) =>
-          Array.isArray(page.content) ? page.content : [page]
-        )
-        .filter(
-          (post) =>
-            post.id &&
-            !posts.some((existingPost) => existingPost.id === post.id)
-        );
+      const formattedPosts = propPosts.flatMap((page) =>
+        Array.isArray(page.content) ? page.content : [page]
+      );
 
-      // Only update the posts state if there are new posts to add
-      if (newPosts.length > 0) {
-        setPosts((prevPosts) => [...newPosts, ...prevPosts]);
-
-        // Update comment inputs for new posts
-        setCommentInputs((prevInputs) => {
-          const newInputs = newPosts.reduce(
-            (acc, post) => ({
-              ...acc,
-              [post.id]: "",
-            }),
-            {}
-          );
-          return { ...prevInputs, ...newInputs };
+      setPosts((prevPosts) => {
+        // Cập nhật bài viết cũ nếu có thay đổi
+        const updatedPosts = formattedPosts.map((newPost) => {
+          const existingPost = prevPosts.find((post) => post.id === newPost.id);
+          return existingPost ? { ...existingPost, ...newPost } : newPost;
         });
-      }
+
+        return updatedPosts;
+      });
+
+      // Cập nhật comment inputs cho bài viết mới
+      setCommentInputs((prevInputs) => {
+        const newInputs = formattedPosts.reduce(
+          (acc, post) => ({
+            ...acc,
+            [post.id]: prevInputs[post.id] || "", // Giữ nội dung cũ nếu có
+          }),
+          {}
+        );
+        return { ...prevInputs, ...newInputs };
+      });
     }
-  }, [propPosts]); // Notice that 'posts' is removed from the dependency array
+  }, [propPosts]);
 
   const handleCommentSubmit = async (postId, commentContent) => {
     try {

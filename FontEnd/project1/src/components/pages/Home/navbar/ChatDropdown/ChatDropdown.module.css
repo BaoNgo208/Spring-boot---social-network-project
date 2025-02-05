@@ -1,75 +1,91 @@
 .dropdown {
-    position: relative;
-  }
-  
-  .dropdownToggle {
+  position: relative;
+  display: inline-block;
+}
 
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: black; /* Màu đỏ cho nút "Log Out" */
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
-  .dropdownToggle:hover {
-    background-color: #333;
-  }
-  .dropdownMenu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    width: 300px;
-    max-height: 400px;
-    overflow-y: auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .container {
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #f0f0f0;
-  }
-  
-  .profileUserImg {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .userInfo {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .senderName {
-    font-weight: bold;
-    font-size: 14px;
-  }
-  
-  .lastMessage {
-    color: #555;
-    font-size: 13px;
-  }
-  
-  .timeElapsed {
-    font-size: 12px;
-    color: #888;
-    margin-top: 5px;
-  }
-  
-  .noChats {
-    padding: 10px;
-    text-align: center;
-    color: #888;
-  }
+.dropdownToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: black; /* Màu đỏ cho nút "Log Out" */
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 300px;
+  background: #242526;
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.header {
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #3a3b3c;
+}
+
+.searchBox {
+  width: 100%;
+  padding: 8px;
+  background: #3a3b3c;
+  border: none;
+  color: white;
+  font-size: 14px;
+}
+
+.chatItem {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chatItem:hover {
+  background: #3a3b3c;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.chatDetails {
+  flex-grow: 1;
+}
+
+.chatName {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.chatMessage {
+  font-size: 12px;
+  color: #b0b3b8;
+}
+
+.chatTime {
+  font-size: 12px;
+  color: #b0b3b8;
+  white-space: nowrap;
+}
+
+.noChat {
+  padding: 15px;
+  text-align: center;
+  color: #b0b3b8;
+}
