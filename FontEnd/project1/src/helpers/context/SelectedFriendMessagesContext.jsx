@@ -7,6 +7,7 @@ export const SelectedFriendMessagesProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true); // Kiểm tra còn tin nhắn cũ không
+
   const loadMessages = async (friend, newPage = 0) => {
     if (!friend) return; // Kiểm tra nếu không có bạn bè được chọn
 

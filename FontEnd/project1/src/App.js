@@ -18,7 +18,11 @@ import { RecommendUsersProvider } from './helpers/context/RecommendUsersContext'
 import { FriendProvider } from './helpers/context/FriendContext';
 import { ChatProvider } from './helpers/context/ChatContext';
 import { SelectedFriendMessagesProvider } from './helpers/context/SelectedFriendMessagesContext';
+import Chat from './components/pages/Home/Chat/Chat';
+import { useChat } from './helpers/context/ChatContext';
+
 const App = () => {
+
     useEffect(() => {
         const token = sessionStorage.getItem("accessToken");
         if (token) {

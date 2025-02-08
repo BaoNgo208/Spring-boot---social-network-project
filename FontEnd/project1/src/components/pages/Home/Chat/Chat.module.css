@@ -107,3 +107,26 @@
     border-radius: 8px;  /* Optional: border radius để ảnh trông mềm mại hơn */
   }
   
+
+  .previewContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+  
+  .previewImage {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+  
+  .removePreview {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: red;
+    cursor: pointer;
+  }
+  

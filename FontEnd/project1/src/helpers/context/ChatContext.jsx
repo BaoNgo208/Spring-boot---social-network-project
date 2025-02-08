@@ -1,17 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import api from "../api";
-import {
-  registerMessageCallback,
-  setSelectedFriend as wsSetSelectedFriend,
-} from "../WebSocketService";
-
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const handleCloseChat = () => {
+    setSelectedFriend(null);
+  };
 
   return (
-    <ChatContext.Provider value={{ selectedFriend, setSelectedFriend }}>
+    <ChatContext.Provider
+      value={{
+        selectedFriend,
+        setSelectedFriend,
+        handleCloseChat,
+      }}
+    >
       {children}
     </ChatContext.Provider>
   );

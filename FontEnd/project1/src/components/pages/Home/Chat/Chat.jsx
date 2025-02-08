@@ -65,6 +65,8 @@ const Chat = ({ userId, friend, onClose, messages, chatContainerRef }) => {
 
       sendMessage(message, receiverId, userId, mediaUrl);
       setMessage("");
+      setSelectedFile(null);
+      setPreviewUrl(null);
     }
   };
 
@@ -118,6 +120,25 @@ const Chat = ({ userId, friend, onClose, messages, chatContainerRef }) => {
         <div ref={messageEndRef} />
       </div>
       <div className={classes.footer}>
+        {previewUrl && (
+          <div className={classes.previewContainer}>
+            <img
+              src={previewUrl}
+              alt="Preview"
+              className={classes.previewImage}
+            />
+            <button
+              className={classes.removePreview}
+              onClick={() => {
+                setPreviewUrl(null);
+                setSelectedFile(null);
+              }}
+            >
+              ✖
+            </button>
+          </div>
+        )}
+
         <div className={classes.media}>
           <Button
             className={classes.media_button}

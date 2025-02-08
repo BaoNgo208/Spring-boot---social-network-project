@@ -40,7 +40,6 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .revoked(false)
                 .build();
-        System.out.println("rt : "+refreshTokenEntity.getRefreshToken());
         refreshTokenRepo.save(refreshTokenEntity);
     }
 

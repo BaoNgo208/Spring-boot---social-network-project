@@ -31,8 +31,7 @@ export const Home = () => {
   const chatContainerRef = useRef(null);
   const [messagePage, setMessagePage] = useState(0);
   const [recommendUsers, setRecommendUsers] = useState();
-  const { friends, setFriends, contextAllMessages, setContextAllMessages } =
-    useFriendContext();
+  const { setFriends, setContextAllMessages } = useFriendContext();
   const { messages, setMessages } = useSelectedFriendMessagesContext();
 
   useEffect(() => {
@@ -127,7 +126,7 @@ export const Home = () => {
         ...prevFeeds,
         ...(Array.isArray(newPost) ? newPost : [newPost]),
       ]);
-      return [...prevFeeds, ...(Array.isArray(newPost) ? newPost : [newPost])];
+      return [...(Array.isArray(newPost) ? newPost : [newPost]), ...prevFeeds];
     });
   };
 
@@ -208,16 +207,16 @@ export const Home = () => {
     }
   }, [hasMore, loadMoreMessages]);
 
-  useEffect(() => {
-    if (selectedFriend) {
-      const chatContainer = chatContainerRef.current;
-      chatContainer.addEventListener("scroll", handleChatScroll);
+  // useEffect(() => {
+  //   if (selectedFriend) {
+  //     const chatContainer = chatContainerRef.current;
+  //     chatContainer.addEventListener("scroll", handleChatScroll);
 
-      return () => {
-        chatContainer.removeEventListener("scroll", handleChatScroll);
-      };
-    }
-  }, [selectedFriend, handleChatScroll]);
+  //     return () => {
+  //       chatContainer.removeEventListener("scroll", handleChatScroll);
+  //     };
+  //   }
+  // }, [selectedFriend, handleChatScroll]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -238,7 +237,7 @@ export const Home = () => {
       );
 
       setMessages(selectedFriendMessages);
-      console.log("mess:", messages);
+      // console.log("mess:", messages);
     } else {
       setMessages([]); // Nếu không có bạn bè nào được chọn, làm rỗng danh sách tin nhắn
     }
@@ -284,16 +283,16 @@ export const Home = () => {
           />
           {renderPosts()}
           <div className={classes.chatSection}>
-            {selectedFriend && (
-              <Chat
-                userId={sessionStorage.getItem("userId")}
-                friend={selectedFriend}
-                onClose={handleCloseChat}
-                messages={messages}
-                className={classes.chat}
-                chatContainerRef={chatContainerRef}
-              />
-            )}
+            {/* {selectedFriend && (
+              // <Chat
+              //   userId={sessionStorage.getItem("userId")}
+              //   friend={selectedFriend}
+              //   onClose={handleCloseChat}
+              //   messages={messages}
+              //   className={classes.chat}
+              //   chatContainerRef={chatContainerRef}
+              // />
+            )} */}
           </div>
         </div>
         {renderFriendList()}

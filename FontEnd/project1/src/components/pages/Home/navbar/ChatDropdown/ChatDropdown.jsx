@@ -49,13 +49,11 @@ const ChatDropdown = (props) => {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  // console.log("chats:", chats);
 
   const handleChatClicked = (otherUserId) => {
     const friend = props.friends.find((f) => f.id === otherUserId);
     if (friend) {
       setSelectedFriend(friend); // Cập nhật selectedFriend nếu tìm thấy
-      // console.log("Chat dropdown updated:", friend);
       loadMessages(friend, 0);
     } else {
       console.log("User not found in friends list.");
